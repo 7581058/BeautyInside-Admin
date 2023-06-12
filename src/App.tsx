@@ -1,5 +1,11 @@
-function App() {
-  return <></>
-}
+import { AdminHeader } from './components/AdminHeader'
+import GlobalStyles from './styles/GlobalStyle'
 
-export default App
+export default function App() {
+  return (
+    <>
+      <GlobalStyles />
+      <AdminHeader />
+    </>
+  )
+}
