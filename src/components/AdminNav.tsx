@@ -27,7 +27,8 @@ const SideMenu = styled.div`
   position: absolute;
   width: 230px;
   height: 100%;
-  border-right: 2px solid #f3f3f3;
+  border-right: 1px solid #f3f3f3;
+  z-index: 9;
   display: flex;
   flex-direction: column;
   align-items: center;
