@@ -10,6 +10,7 @@ const GlobalStyles = createGlobalStyle`
     font-family: 'Noto Sans KR', sans-serif;
     font-weight: 400;
     letter-spacing: -5%;
+    color: ${(props) => props.theme.colors.text_primary}
   }
 
   .test {
