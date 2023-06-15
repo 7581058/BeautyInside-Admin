@@ -11,6 +11,12 @@ const GlobalStyles = createGlobalStyle`
     font-weight: 400;
     letter-spacing: -5%;
   }
+
+  .test {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+  }
 `
 
 export default GlobalStyles
