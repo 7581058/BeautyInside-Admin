@@ -1,5 +1,6 @@
 import { styled } from 'styled-components'
 import { NavLink } from 'react-router-dom'
+import { SlArrowRight } from 'react-icons/sl'
 
 export const AdminNav = () => {
   return (
@@ -11,12 +12,21 @@ export const AdminNav = () => {
       <div className="menu-wrap">
         <MenuItem to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
           대시보드
+          <ArrowIcon>
+            <SlArrowRight />
+          </ArrowIcon>
         </MenuItem>
         <MenuItem to="/product" className={({ isActive }) => (isActive ? 'active' : '')}>
           상품관리
+          <ArrowIcon>
+            <SlArrowRight />
+          </ArrowIcon>
         </MenuItem>
         <MenuItem to="/purchase" className={({ isActive }) => (isActive ? 'active' : '')}>
           거래 내역 관리
+          <ArrowIcon>
+            <SlArrowRight />
+          </ArrowIcon>
         </MenuItem>
       </div>
     </SideMenu>
@@ -67,4 +77,11 @@ const MenuItem = styled(NavLink)`
     background-color: #f3f3f3;
     padding-left: 40px;
   }
+`
+
+const ArrowIcon = styled.div`
+  position: absolute;
+  right: 10px;
+  font-size: 12px;
+  color: ${(props) => props.theme.colors.text_secondary};
 `
