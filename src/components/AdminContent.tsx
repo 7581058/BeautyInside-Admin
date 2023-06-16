@@ -11,7 +11,7 @@ const Wrap = styled.div`
   right: 0;
   bottom: 0;
   background-color: #fff;
-  padding: 10px 74px;
+  padding: 30px 74px;
   box-sizing: border-box;
   color: ${(props) => props.theme.colors.primary};
   overflow: hidden;

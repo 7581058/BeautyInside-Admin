@@ -190,7 +190,6 @@ const BottomWrap = styled.div`
   flex-basis: 0;
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
 `
 
 const Chart = styled.div`
