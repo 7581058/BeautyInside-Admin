@@ -3,6 +3,7 @@ import { ProductManage } from './ProductManage'
 import { PurchaseManage } from './PurchaseManage'
 import { DashBoard } from './DashBoard'
 import App from '../App'
+import { ProductAdd } from './ProductAdd'
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: 'purchase',
         element: <PurchaseManage />,
+      },
+      {
+        path: 'productadd',
+        element: <ProductAdd />,
       },
     ],
   },

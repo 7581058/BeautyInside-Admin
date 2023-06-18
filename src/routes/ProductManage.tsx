@@ -1,59 +1,27 @@
 import { useState, useEffect } from 'react'
-import { getProductList, addProduct, Product } from '../apis/api'
+import { NavLink } from 'react-router-dom'
+import { getProductList, addProduct, Product, deleteProduct } from '../apis/api'
 import styled from 'styled-components'
 import { AdminBoard } from '../components/AdminBoard'
+import { BoardPagination } from '../components/BoardPagination'
 
 export const ProductManage = () => {
   //상품리스트
   const [productList, setProductList] = useState<Product[]>([])
-  // 페이지
-  const [pageList, setPageList] = useState([1])
-  const [curPage, setCurPage] = useState(0)
-  const [prevBlock, setPrevBlock] = useState(0)
-  const [nextBlock, setNextBlock] = useState(0)
-  const [lastPage, setLastPage] = useState(0)
+  const [saveList, setSaveList] = useState<Product[]>([])
 
-  const requestAddProduct = async () => {
-    const AddProduct = await addProduct({
-      title: 'test4',
-      price: 50000,
-      description: 'test4 description',
-      tags: ['페이스'],
-    })
-  }
+  //체크박스 저장
+  const selectchk = ['']
 
-  const handleClickAddProduct = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    event?.preventDefault()
-    requestAddProduct()
-  }
+  //페이지
+  const [curPage, setCurPage] = useState(1)
+  const [limitPage, setLimitPage] = useState(12) //한번에 보여질 개수
 
-  useEffect(() => {
-    ;(async () => {
-      try {
-        const data = await getProductList()
-        setProductList(data)
-      } catch (error) {
-        console.error('Error fetching products:', error)
-      }
-    })()
-  }, [])
   const CATEGORYOPTION = [
-    {
-      label: '카테고리',
-      value: '카테고리',
-    },
-    {
-      label: '페이스',
-      value: '페이스',
-    },
-    {
-      label: '립',
-      value: '립',
-    },
-    {
-      label: '아이',
-      value: '아이',
-    },
+    { label: '카테고리', value: '카테고리' },
+    { label: '페이스', value: '페이스' },
+    { label: '립', value: '립' },
+    { label: '아이', value: '아이' },
   ]
   const SORTOPTION = [
     { label: '정렬', value: '정렬' },
@@ -62,18 +30,94 @@ export const ProductManage = () => {
     { label: '품절여부', value: '품절여부' },
   ]
 
+  const requestAddProduct = async () => {
+    const AddProduct = await addProduct({
+      title: '소프트 매트 컴플리트 파운데이션-고비',
+      price: 68000,
+      description: '소프트 매트 컴플리트 파운데이션',
+      tags: ['페이스 메이크업'],
+    })
+  }
+
+  //상품 추가
+  const handleClickAddProduct = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event?.preventDefault()
+    requestAddProduct()
+  }
+
+  //상품 삭제
+  const handleClickDeleteProduct = async () => {
+    const results = await Promise.all(selectchk.map((id) => deleteProduct(id)))
+    window.location.reload()
+  }
+
+  //카테고리 정렬
+  const handleChangeCategoryoption = (e) => {
+    if (e.target.value === '페이스') {
+      setProductList([...productList].filter((product) => product.tags[0] === '페이스 메이크업'))
+    } else if (e.target.value === '아이') {
+      setProductList([...productList].filter((product) => product.tags[0] === '아이 메이크업'))
+    } else if (e.target.value === '립') {
+      setProductList([...productList].filter((product) => product.tags[0] === '립 메이크업'))
+    } else {
+      setProductList(saveList)
+    }
+  }
+
+  //일반 정렬
+  const handleChangeSortoption = (e) => {
+    if (e.target.value === '낮은가격') {
+      setProductList(
+        [...productList].sort(function (a, b) {
+          return a.price < b.price ? -1 : a.price > b.price ? 1 : 0
+        }),
+      )
+    } else if (e.target.value === '높은가격') {
+      setProductList(
+        [...productList].sort(function (a, b) {
+          return a.price > b.price ? -1 : a.price < b.price ? 1 : 0
+        }),
+      )
+    } else if (e.target.value === '품절상품') {
+      setProductList([...productList].filter((product) => product.isSoldOut === true))
+    } else {
+      setProductList(saveList)
+    }
+  }
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const data = await getProductList()
+        setSaveList(data)
+        setProductList(data)
+      } catch (error) {
+        console.error('Error fetching products:', error)
+      }
+    })()
+  }, [])
+
+  //페이지 계산
+  const lastPage = curPage * limitPage
+  const firstPage = lastPage - limitPage
+  const currentPages = (page) => {
+    let currentPages = 0
+    currentPages = page.slice(firstPage, lastPage)
+    return currentPages
+  }
+
   //<button onClick={handleClickAddProduct}>추가</button>
   return (
     <>
       <AdminBoard title="상품관리">
-        <Select className="category">
+        <Select className="category" onChange={handleChangeCategoryoption}>
           {CATEGORYOPTION.map((option, index) => (
             <option key={index} value={option.value}>
               {option.label}
             </option>
           ))}
         </Select>
-        <Select>
+        <Select onChange={handleChangeSortoption}>
           {SORTOPTION.map((option, index) => (
             <option key={index} value={option.value}>
               {option.label}
@@ -81,7 +125,7 @@ export const ProductManage = () => {
           ))}
         </Select>
         <BoardHeader>
-          <input type="checkbox" name="" id="" className="board-header chk" />
+          <input type="checkbox" name="" id="" className="board-header chk" disabled />
           <span className="board-header index">No</span>
           <span className="board-header cate">카테고리</span>
           <span className="board-header title">상품명</span>
@@ -89,27 +133,38 @@ export const ProductManage = () => {
           <span className="board-header sold">품절여부</span>
         </BoardHeader>
         <BoardContent>
-          {productList.map((product, index) => (
-            <BoardItem>
-              <input type="checkbox" name="" id="" className="board-header chk" />
-              <span className="board-header index">{index + 1}</span>
-              <span className="board-header cate">{product.tags}</span>
-              <span className="board-header title">{product.title}</span>
-              <span className="board-header price">{product.price}</span>
-              <span className="board-header sold">{product.isSoldOut ? 'Y' : 'N'}</span>
-            </BoardItem>
-          ))}
+          {productList.length === 0 ? (
+            <EmptyList>등록된 상품이 없습니다.</EmptyList>
+          ) : (
+            currentPages(productList).map((product, index) => (
+              <BoardItem key={index}>
+                <input
+                  type="checkbox"
+                  name=""
+                  className="board-header chk"
+                  onChange={() => {
+                    console.log('체크클릭' + product.id)
+                    selectchk.push(product.id)
+                  }}
+                />
+                <span className="board-header index">{index + 1}</span>
+                <span className="board-header cate">{product.tags}</span>
+                <span className="board-header title">{product.title}</span>
+                <span className="board-header price">{product.price}</span>
+                <span className="board-header sold">{product.isSoldOut ? 'Y' : 'N'}</span>
+              </BoardItem>
+            ))
+          )}
         </BoardContent>
         <ButtonWrap>
-          <DeleteButton>삭제</DeleteButton>
-          <PageButtonWrap>
-            <PageMoveButton>처음</PageMoveButton>
-            {pageList.map((page) => (
-              <PageButton value={page}>{page}</PageButton>
-            ))}
-            <PageMoveButton value={lastPage}>마지막</PageMoveButton>
-          </PageButtonWrap>
-          <AddButton>등록</AddButton>
+          <DeleteButton onClick={handleClickDeleteProduct}>삭제</DeleteButton>
+          <BoardPagination
+            limitPage={limitPage}
+            totalProduct={productList.length}
+            paginate={setCurPage}
+            curpage={curPage}
+          />
+          <AddButton to="/productadd">등록</AddButton>
         </ButtonWrap>
       </AdminBoard>
     </>
@@ -134,6 +189,7 @@ const BoardHeader = styled.div`
   align-items: center;
   justify-content: center;
   .board-header {
+    flex-basis: 0;
     flex-grow: 1;
     display: flex;
     justify-content: center;
@@ -151,8 +207,8 @@ const BoardHeader = styled.div`
 
 const BoardContent = styled.div`
   width: 100%;
+  max-height: 360px;
   overflow: hidden;
-  margin-bottom: 20px;
 `
 
 const BoardItem = styled.div`
@@ -162,9 +218,13 @@ const BoardItem = styled.div`
   align-items: center;
   justify-content: center;
   .board-header {
+    flex-basis: 0;
     flex-grow: 1;
     display: flex;
     justify-content: center;
+  }
+  .cate {
+    justify-content: left;
   }
   .chk {
     flex-grow: 0.5;
@@ -174,6 +234,7 @@ const BoardItem = styled.div`
   }
   .title {
     flex-grow: 3;
+    justify-content: left;
   }
   &:hover {
     background-color: ${(props) => props.theme.colors.gray_1};
@@ -181,13 +242,16 @@ const BoardItem = styled.div`
 `
 
 const ButtonWrap = styled.div`
-  width: 100%;
+  position: absolute;
+  width: calc(100% - 40px);
+  bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
 `
 
-const AddButton = styled.button`
+const AddButton = styled(NavLink)`
   border: none;
   outline: none;
   width: 76px;
@@ -195,6 +259,10 @@ const AddButton = styled.button`
   background-color: ${(props) => props.theme.colors.primary};
   border-radius: 6px;
   color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 `
 
 const DeleteButton = styled.button`
@@ -206,31 +274,6 @@ const DeleteButton = styled.button`
   border-radius: 6px;
   border: 1px solid ${(props) => props.theme.colors.gray_2};
   color: ${(props) => props.theme.colors.text_secondary};
-`
-const PageButtonWrap = styled.div`
-  display: flex;
-  align-items: center;
-`
-
-const PageButton = styled.button`
-  width: 25px;
-  height: 25px;
-  background-color: ${(props) => props.theme.colors.primary};
-  border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-`
-
-const PageMoveButton = styled.button`
-  border: 1px solid ${(props) => props.theme.colors.gray_3};
-  width: 60px;
-  height: 25px;
-  background-color: #fff;
-  margin-left: 10px;
-  margin-right: 10px;
-  box-sizing: border-box;
 `
 
 const Select = styled.select`
@@ -246,4 +289,14 @@ const Select = styled.select`
   &.category {
     right: 130px;
   }
+`
+
+const EmptyList = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  color: ${(props) => props.theme.colors.primary};
 `

@@ -175,6 +175,7 @@ const MiddleCard = styled.div`
   justify-content: center;
   background-color: ${(props) => props.theme.colors.gray_1};
   border-radius: ${(props) => props.theme.borderRadius};
+  background-color: #fff;
   box-sizing: border-box;
   padding: 30px;
   display: flex;
