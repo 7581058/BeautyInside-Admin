@@ -16,7 +16,10 @@ const Header = styled.div`
   right: 0;
   width: calc(100% - 230px);
   height: 64px;
-  background-color: #ffa9be;
+  background-color: ${(props) => props.theme.colors.primary};
+  background-color: #fff;
+  border-bottom: 1px solid ${(props) => props.theme.colors.gray_2};
+  z-index: 11;
   display: flex;
   justify-content: right;
   align-items: center;
