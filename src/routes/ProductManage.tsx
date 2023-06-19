@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-import { getProductList, addProduct, Product, deleteProduct } from '../apis/api'
+import { getProductList, Product, deleteProduct } from '../apis/api'
 import styled from 'styled-components'
 import { AdminBoard } from '../components/AdminBoard'
 import { BoardPagination } from '../components/BoardPagination'
@@ -30,21 +30,6 @@ export const ProductManage = () => {
     { label: '품절여부', value: '품절여부' },
   ]
 
-  const requestAddProduct = async () => {
-    const AddProduct = await addProduct({
-      title: '소프트 매트 컴플리트 파운데이션-고비',
-      price: 68000,
-      description: '소프트 매트 컴플리트 파운데이션',
-      tags: ['페이스 메이크업'],
-    })
-  }
-
-  //상품 추가
-  const handleClickAddProduct = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    event?.preventDefault()
-    requestAddProduct()
-  }
-
   //상품 삭제
   const handleClickDeleteProduct = async () => {
     const results = await Promise.all(selectchk.map((id) => deleteProduct(id)))
@@ -54,11 +39,11 @@ export const ProductManage = () => {
   //카테고리 정렬
   const handleChangeCategoryoption = (e) => {
     if (e.target.value === '페이스') {
-      setProductList([...productList].filter((product) => product.tags[0] === '페이스 메이크업'))
+      setProductList([...productList].filter((product) => product.tags[0] === '페이스'))
     } else if (e.target.value === '아이') {
-      setProductList([...productList].filter((product) => product.tags[0] === '아이 메이크업'))
+      setProductList([...productList].filter((product) => product.tags[0] === '아이'))
     } else if (e.target.value === '립') {
-      setProductList([...productList].filter((product) => product.tags[0] === '립 메이크업'))
+      setProductList([...productList].filter((product) => product.tags[0] === '립'))
     } else {
       setProductList(saveList)
     }
@@ -106,7 +91,6 @@ export const ProductManage = () => {
     return currentPages
   }
 
-  //<button onClick={handleClickAddProduct}>추가</button>
   return (
     <>
       <AdminBoard title="상품관리">
