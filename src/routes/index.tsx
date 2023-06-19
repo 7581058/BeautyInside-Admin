@@ -5,6 +5,7 @@ import { DashBoard } from './DashBoard'
 import App from '../App'
 import { ProductAdd } from './ProductAdd'
 import { ProductDetail } from './ProductDetail'
+import { ProductEdit } from './ProductEdit'
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: 'productdetail',
         element: <ProductDetail />,
+      },
+      {
+        path: 'productedit',
+        element: <ProductEdit />,
       },
     ],
   },

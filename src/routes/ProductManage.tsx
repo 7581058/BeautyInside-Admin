@@ -34,7 +34,6 @@ export const ProductManage = () => {
 
   //상세로 이동
   const handleDoubleclickItem = (id) => {
-    //console.log('더블클릭', id)
     navigate('/productdetail', {
       state: {
         id,
