@@ -4,6 +4,7 @@ import { PurchaseManage } from './PurchaseManage'
 import { DashBoard } from './DashBoard'
 import App from '../App'
 import { ProductAdd } from './ProductAdd'
+import { ProductDetail } from './ProductDetail'
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: 'productadd',
         element: <ProductAdd />,
+      },
+      {
+        path: 'productdetail',
+        element: <ProductDetail />,
       },
     ],
   },

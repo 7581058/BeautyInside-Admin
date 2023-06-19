@@ -321,21 +321,6 @@ const ButtonWrap = styled.div`
   box-sizing: border-box;
 `
 
-// const SubmitButton = styled(NavLink)`
-//   right: 0;
-//   bottom: 0;
-//   background-color: ${(props) => props.theme.colors.primary};
-//   border: none;
-//   outline: none;
-//   width: 76px;
-//   height: 42px;
-//   border-radius: 6px;
-//   color: #fff;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   text-decoration: none;
-// `
 const SubmitButton = styled.button`
   right: 0;
   bottom: 0;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { getProductList, Product, deleteProduct } from '../apis/api'
 import styled from 'styled-components'
 import { AdminBoard } from '../components/AdminBoard'
@@ -29,6 +29,18 @@ export const ProductManage = () => {
     { label: '높은가격', value: '높은가격' },
     { label: '품절여부', value: '품절여부' },
   ]
+
+  const navigate = useNavigate()
+
+  //상세로 이동
+  const handleDoubleclickItem = (id) => {
+    //console.log('더블클릭', id)
+    navigate('/productdetail', {
+      state: {
+        id,
+      },
+    })
+  }
 
   //상품 삭제
   const handleClickDeleteProduct = async () => {
@@ -121,7 +133,12 @@ export const ProductManage = () => {
             <EmptyList>등록된 상품이 없습니다.</EmptyList>
           ) : (
             currentPages(productList).map((product, index) => (
-              <BoardItem key={index}>
+              <BoardItem
+                key={index}
+                onDoubleClick={() => {
+                  handleDoubleclickItem(product.id)
+                }}
+              >
                 <input
                   type="checkbox"
                   name=""

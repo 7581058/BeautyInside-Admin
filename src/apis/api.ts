@@ -47,14 +47,14 @@ export const getPurchaseList = async (): Promise<TransactionDetail[]> => {
 }
 
 //단일제품상세조회 // products/:productId
-export const getProduct = async (id: string): Promise<ProductDetail[]> => {
+export const getProduct = async (id: string): Promise<ProductDetails | boolean> => {
   try {
     const { data } = await requestAdmin.get('products/' + id)
     return data
   } catch (error) {
     console.warn(error)
     console.warn('fail to load product')
-    return []
+    return false
   }
 }
 
@@ -114,7 +114,7 @@ export interface User {
 }
 
 //단일 제품 상세 응답
-export interface ProductDetail {
+export interface ProductDetails {
   // 제품의 상세 내용
   id: string // 제품 ID
   title: string // 제품 이름
