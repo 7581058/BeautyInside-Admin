@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useLocation, NavLink } from 'react-router-dom'
+import { useLocation, NavLink, useNavigate } from 'react-router-dom'
 import { styled } from 'styled-components'
 import { SlArrowLeft } from 'react-icons/sl'
 import { AdminBoard } from '../components/AdminBoard'
 import { getProduct, ProductDetails, deleteProduct } from '../apis/api'
 
 export const ProductDetail = () => {
+  const navigate = useNavigate()
   const location = useLocation()
   const id = location.state.id
 
@@ -33,6 +34,16 @@ export const ProductDetail = () => {
     })()
   }, [])
 
+  //상품 삭제
+  const handleClickDeleteProduct = async () => {
+    const results = await deleteProduct(id)
+    if (!results) return
+    if (results) {
+      alert('삭제되었습니다.')
+      navigate('/product')
+    }
+  }
+
   return (
     <>
       <PrevButton to="/product">
@@ -40,8 +51,8 @@ export const ProductDetail = () => {
       </PrevButton>
       <AdminBoard title="상품 상세 정보">
         <ButtonWrap>
-          <Button to="/product">삭제</Button>
-          <Button to="/product">수정</Button>
+          <DeleteButton onClick={handleClickDeleteProduct}>삭제</DeleteButton>
+          <Button to="/productedit">수정</Button>
         </ButtonWrap>
         <DetailWrap>
           <Inner>
@@ -80,6 +91,27 @@ const ButtonWrap = styled.div`
   gap: 10px;
   //margin-top: 20px;
   box-sizing: border-box;
+`
+
+const DeleteButton = styled.button`
+  right: 96px;
+  bottom: 0;
+  background-color: #fff;
+  border: none;
+  outline: none;
+  width: 76px;
+  height: 42px;
+  border-radius: 6px;
+  border: 1px solid ${(props) => props.theme.colors.gray_2};
+  color: ${(props) => props.theme.colors.text_secondary};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
 `
 
 const Button = styled(NavLink)`
