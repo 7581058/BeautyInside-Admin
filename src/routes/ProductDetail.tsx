@@ -44,6 +44,15 @@ export const ProductDetail = () => {
     }
   }
 
+  //상품 수정
+  const handleClickEditProduct = async (product) => {
+    navigate('/productedit', {
+      state: {
+        product,
+      },
+    })
+  }
+
   return (
     <>
       <PrevButton to="/product">
@@ -51,8 +60,14 @@ export const ProductDetail = () => {
       </PrevButton>
       <AdminBoard title="상품 상세 정보">
         <ButtonWrap>
-          <DeleteButton onClick={handleClickDeleteProduct}>삭제</DeleteButton>
-          <Button to="/productedit">수정</Button>
+          <Button onClick={handleClickDeleteProduct}>삭제</Button>
+          <Button
+            onClick={() => {
+              handleClickEditProduct(Product)
+            }}
+          >
+            수정
+          </Button>
         </ButtonWrap>
         <DetailWrap>
           <Inner>
@@ -93,28 +108,7 @@ const ButtonWrap = styled.div`
   box-sizing: border-box;
 `
 
-const DeleteButton = styled.button`
-  right: 96px;
-  bottom: 0;
-  background-color: #fff;
-  border: none;
-  outline: none;
-  width: 76px;
-  height: 42px;
-  border-radius: 6px;
-  border: 1px solid ${(props) => props.theme.colors.gray_2};
-  color: ${(props) => props.theme.colors.text_secondary};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-decoration: none;
-`
-
-const Button = styled(NavLink)`
+const Button = styled.button`
   right: 96px;
   bottom: 0;
   background-color: #fff;
