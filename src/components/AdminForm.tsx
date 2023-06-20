@@ -1,11 +1,11 @@
 import { styled } from 'styled-components'
 import { SlArrowLeft } from 'react-icons/sl'
-import { NavLink, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
-import { addProduct } from '../apis/api'
+import { NavLink, useNavigate, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { addProduct, editProduct } from '../apis/api'
 
-export const AdminForm = ({ link, formtype }) => {
-  const [Category, setCategory] = useState([])
+export const AdminForm = ({ formtype }) => {
+  const [Category, setCategory] = useState('')
   const [Title, setTitle] = useState('')
   const [Price, setPrice] = useState(0)
   const [Description, setDescription] = useState('')
@@ -13,12 +13,21 @@ export const AdminForm = ({ link, formtype }) => {
   const [Detail, setDetail] = useState('')
   const [ThumbTitle, setThumbTitle] = useState('')
   const [DetailTitle, setDetailTitle] = useState('')
+  const [isSoldOut, setisSoldOut] = useState(false)
+
   const navigate = useNavigate()
+  const location = useLocation()
+
   const CATEGORYOPTION = [
     { label: '카테고리', value: '카테고리' },
     { label: '페이스', value: '페이스' },
     { label: '립', value: '립' },
     { label: '아이', value: '아이' },
+  ]
+
+  const ISSOLDOUTOPTION = [
+    { label: 'N', value: 'N' },
+    { label: 'Y', value: 'Y' },
   ]
   //이미지 최대 용량
   const THUMB_MAX = 1024 ** 2 //1MB
@@ -26,6 +35,14 @@ export const AdminForm = ({ link, formtype }) => {
 
   const handleChangeCategoryoption = (e) => {
     setCategory(e.target.value)
+  }
+
+  const handleChangeIsSoldOutoption = (e) => {
+    if (e.target.value === 'Y') {
+      setisSoldOut(true)
+    } else {
+      setisSoldOut(false)
+    }
   }
 
   const handleChangeTitle = (e) => {
@@ -82,6 +99,17 @@ export const AdminForm = ({ link, formtype }) => {
     })
   }
 
+  const requestEditProduct = async (id) => {
+    const EditProduct = await editProduct(id, {
+      title: Title,
+      price: Price,
+      description: Description,
+      tags: Category,
+      isSoldOut: isSoldOut,
+      // thumbnailBase64: Thumb,
+    })
+  }
+
   const handleClickSubmitButton = (e) => {
     if (
       Category.length === 0 ||
@@ -100,14 +128,42 @@ export const AdminForm = ({ link, formtype }) => {
         alert('등록이 완료되었습니다.')
         navigate('/product')
       } else if (formtype === '수정') {
-        console.log('수정요청')
+        //requestEditProduct(product.id)
+        alert('수정이 완료되었습니다.')
+        console.log(ThumbTitle)
+        //navigate(-1)
       }
     }
   }
 
+  const handleClickPrevButton = () => {
+    navigate(-1)
+  }
+
+  let product = ''
+  if (formtype === '수정') {
+    product = location.state.product
+  }
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        setTitle(product.title)
+        setCategory(product.tags)
+        setPrice(product.price)
+        setDescription(product.description)
+        setisSoldOut(product.isSoldOut)
+        setThumb(product.thumbnail)
+        setDetail(product.photo)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    })()
+  }, [])
+
   return (
     <>
-      <PrevButton to={link}>
+      <PrevButton onClick={handleClickPrevButton}>
         <SlArrowLeft />
       </PrevButton>
       <FormWrap>
@@ -115,7 +171,7 @@ export const AdminForm = ({ link, formtype }) => {
           <Label>
             카테고리<span>*</span>
           </Label>
-          <Select onChange={handleChangeCategoryoption}>
+          <Select value={Category} onChange={handleChangeCategoryoption}>
             {CATEGORYOPTION.map((option, index) => (
               <option key={index} value={option.value}>
                 {option.label}
@@ -127,13 +183,13 @@ export const AdminForm = ({ link, formtype }) => {
           <Label>
             제품명<span>*</span>
           </Label>
-          <Input onChange={handleChangeTitle}></Input>
+          <Input value={Title || ''} onChange={handleChangeTitle}></Input>
         </Inner>
         <Inner>
           <Label>
             가격<span>*</span>
           </Label>
-          <Input onChange={handleChangePrice} onInput={handleOnInput}></Input>
+          <Input value={Price || ''} onChange={handleChangePrice} onInput={handleOnInput}></Input>
         </Inner>
         {formtype === '등록' ? (
           ''
@@ -142,14 +198,20 @@ export const AdminForm = ({ link, formtype }) => {
             <Label>
               품절여부<span>*</span>
             </Label>
-            <Select></Select>
+            <Select value={isSoldOut ? 'Y' : 'N'} onChange={handleChangeIsSoldOutoption}>
+              {ISSOLDOUTOPTION.map((option, index) => (
+                <option key={index} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
           </Inner>
         )}
         <Inner>
           <Label>
             제품 상세 설명<span>*</span>
           </Label>
-          <TextArea onChange={handleChangeDescription}></TextArea>
+          <TextArea value={Description || ''} onChange={handleChangeDescription}></TextArea>
         </Inner>
         <Inner>
           <ImagesInner>
@@ -297,7 +359,7 @@ const FileLoadInput = styled.input`
   display: none;
 `
 
-const PrevButton = styled(NavLink)`
+const PrevButton = styled.button`
   position: fixed;
   top: 15px;
   left: 240px;
