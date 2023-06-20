@@ -30,6 +30,12 @@ export const AdminNav = () => {
             <SlArrowRight />
           </ArrowIcon>
         </MenuItem>
+        <MenuItem to="/userlist" className={({ isActive }) => (isActive ? 'active' : '')}>
+          사용자 목록
+          <ArrowIcon>
+            <SlArrowRight />
+          </ArrowIcon>
+        </MenuItem>
       </div>
     </SideMenu>
   )
