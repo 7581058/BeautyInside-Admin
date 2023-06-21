@@ -1,9 +1,11 @@
 import styled from 'styled-components'
 import { MdLogout } from 'react-icons/md'
+import { AdminClock } from './AdminClock'
 
 export const AdminHeader = () => {
   return (
     <Header>
+      <AdminClock />
       <LogoutButton>
         <MdLogout />
       </LogoutButton>
@@ -23,6 +25,31 @@ const Header = styled.div`
   display: flex;
   justify-content: right;
   align-items: center;
+  .logo-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 10px;
+    span {
+      font-family: 'InkLipquid', 'sans-serif';
+      font-size: 30px;
+      color: #fff;
+      color: ${(props) => props.theme.colors.primary};
+      margin: 0;
+    }
+    p {
+      color: #353535;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+  }
+`
+
+const Time = styled.div`
+  font-size: 16px;
+  position: absolute;
+  right: 74px;
 `
 
 const LogoutButton = styled.button`

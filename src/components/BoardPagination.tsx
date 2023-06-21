@@ -40,8 +40,10 @@ const PageButton = styled.button`
   align-items: center;
   color: #000;
   background-color: #fff;
+  cursor: pointer;
+  font-size: 14px;
   &.active {
-    background-color: ${(props) => props.theme.colors.primary};
+    color: ${(props) => props.theme.colors.primary};
   }
 `
 

@@ -7,22 +7,12 @@ import {
 } from 'react-icons/hi2'
 import { FiCheckSquare, FiMinusSquare } from 'react-icons/fi'
 
-const today = new Date()
-const dateString = today.toLocaleDateString('ko-KR', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-})
-
 export const DashBoard = () => {
   return (
     <>
       <BoardWrap>
         <TopWrap>
-          <BoardLabel>
-            오늘<span>({dateString})</span>
-          </BoardLabel>
+          <BoardLabel>오늘</BoardLabel>
           <TopBox>
             <TopCard>
               <CardText className="label">거래 수</CardText>
@@ -105,11 +95,6 @@ const BoardLabel = styled.p`
   font-size: 20px;
   margin: 0;
   margin-bottom: 10px;
-  span {
-    font-size: 14px;
-    color: ${(props) => props.theme.colors.primary};
-    margin-left: 10px;
-  }
 `
 
 const TopWrap = styled.div`
@@ -176,8 +161,10 @@ const MiddleCard = styled.div`
   background-color: ${(props) => props.theme.colors.gray_1};
   border-radius: ${(props) => props.theme.borderRadius};
   background-color: #fff;
+  background-color: #f8f8f8;
   box-sizing: border-box;
-  padding: 30px;
+  padding: 20px;
+  padding-left: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
