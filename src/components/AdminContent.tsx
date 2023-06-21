@@ -11,6 +11,7 @@ const Wrap = styled.div`
   right: 0;
   bottom: 0;
   background-color: #fff;
+  background-color: #f8f8f8;
   padding: 30px 74px;
   box-sizing: border-box;
   color: ${(props) => props.theme.colors.primary};
