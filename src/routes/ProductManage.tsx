@@ -50,11 +50,11 @@ export const ProductManage = () => {
   //카테고리 정렬
   const handleChangeCategoryoption = (e) => {
     if (e.target.value === '페이스') {
-      setProductList([...productList].filter((product) => product.tags[0] === '페이스'))
+      setProductList([...productList].filter((product) => product.tags === e.target.value))
     } else if (e.target.value === '아이') {
-      setProductList([...productList].filter((product) => product.tags[0] === '아이'))
+      setProductList([...productList].filter((product) => product.tags === e.target.value))
     } else if (e.target.value === '립') {
-      setProductList([...productList].filter((product) => product.tags[0] === '립'))
+      setProductList([...productList].filter((product) => product.tags === e.target.value))
     } else {
       setProductList(saveList)
     }
