@@ -3,6 +3,7 @@ import { getPurchaseList, TransactionDetail } from '../apis/api'
 import styled from 'styled-components'
 import { useState, useEffect } from 'react'
 import { BoardPagination } from '../components/BoardPagination'
+import { NavLink } from 'react-router-dom' //데이터들어오면 삭제 하기
 
 export const PurchaseManage = () => {
   const [purchaseList, setpurchaseList] = useState<TransactionDetail[]>([])
@@ -21,6 +22,9 @@ export const PurchaseManage = () => {
 
   return (
     <AdminBoard title="거래 내역">
+      <NavLink to="/purchasedetail" style={{ position: 'absolute', top: 0, right: 0 }}>
+        거래내역상세
+      </NavLink>
       <BoardHeader>
         <span className="board-header index">No</span>
         <span className="board-header date">거래일</span>
