@@ -27,7 +27,7 @@ export const ProductManage = () => {
     { label: '정렬', value: '정렬' },
     { label: '낮은가격', value: '낮은가격' },
     { label: '높은가격', value: '높은가격' },
-    { label: '품절여부', value: '품절여부' },
+    { label: '품절상품', value: '품절상품' },
   ]
 
   const navigate = useNavigate()
@@ -49,14 +49,10 @@ export const ProductManage = () => {
 
   //카테고리 정렬
   const handleChangeCategoryoption = (e) => {
-    if (e.target.value === '페이스') {
-      setProductList([...productList].filter((product) => product.tags === e.target.value))
-    } else if (e.target.value === '아이') {
-      setProductList([...productList].filter((product) => product.tags === e.target.value))
-    } else if (e.target.value === '립') {
-      setProductList([...productList].filter((product) => product.tags === e.target.value))
+    if (e.target.value === '카테고리') {
+      setProductList([...saveList])
     } else {
-      setProductList(saveList)
+      setProductList([...productList].filter((product) => product.tags === e.target.value))
     }
   }
 
