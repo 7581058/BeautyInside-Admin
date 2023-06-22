@@ -318,3 +318,10 @@ const EmptyList = styled.div`
   font-size: 16px;
   color: ${(props) => props.theme.colors.primary};
 `
+const Total = styled.span`
+  position: absolute;
+  top: 15px;
+  font-size: 20px;
+  left: 100px;
+  color: ${(props) => props.theme.colors.primary};
+`
