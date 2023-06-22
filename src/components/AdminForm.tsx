@@ -11,6 +11,8 @@ export const AdminForm = ({ formtype }) => {
   const [Description, setDescription] = useState('')
   const [Thumb, setThumb] = useState('')
   const [Detail, setDetail] = useState('')
+  const [sThumb, setsThumb] = useState('')
+  const [sDetail, setsDetail] = useState('')
   const [ThumbTitle, setThumbTitle] = useState('')
   const [DetailTitle, setDetailTitle] = useState('')
   const [isSoldOut, setisSoldOut] = useState(false)
@@ -80,9 +82,15 @@ export const AdminForm = ({ formtype }) => {
         if (name === 'thumbnail' && theFile.size < THUMB_MAX) {
           setThumb(result)
           setThumbTitle(theFile.name)
+          if (Thumb === '') {
+            setsThumb(result)
+          }
         } else if (name === 'detailimage' && theFile.size < DETAIL_MAX) {
           setDetail(result)
           setDetailTitle(theFile.name)
+          if (Detail === '') {
+            setsDetail(result)
+          }
         }
       }
     }
@@ -106,32 +114,42 @@ export const AdminForm = ({ formtype }) => {
       description: Description,
       tags: Category,
       isSoldOut: isSoldOut,
-      // thumbnailBase64: Thumb,
+      thumbnailBase64: Thumb,
+      photoBase64: Detail,
     })
   }
 
   const handleClickSubmitButton = (e) => {
-    if (
-      Category.length === 0 ||
-      Category[0] === '카테고리' ||
-      Title.length === 0 ||
-      Price === 0 ||
-      Description.length === 0 ||
-      Thumb.length === 0 ||
-      Detail.length === 0
-    ) {
-      alert('필수 항목을 정확하게 입력해주세요.')
-    } else {
-      if (formtype === '등록') {
+    if (formtype === '등록') {
+      if (
+        Category.length === 0 ||
+        Category[0] === '카테고리' ||
+        Title.length === 0 ||
+        Price === 0 ||
+        Description.length === 0 ||
+        Thumb.length === 0 ||
+        Detail.length === 0
+      ) {
+        alert('필수 항목을 정확하게 입력해주세요.')
+      } else {
         e?.preventDefault()
         requestAddProduct()
         alert('등록이 완료되었습니다.')
         navigate('/product')
-      } else if (formtype === '수정') {
-        //requestEditProduct(product.id)
+      }
+    } else if (formtype === '수정') {
+      if (
+        Category.length === 0 ||
+        Category[0] === '카테고리' ||
+        Title.length === 0 ||
+        Price === 0 ||
+        Description.length === 0
+      ) {
+        alert('필수 항목을 정확하게 입력해주세요.')
+      } else {
+        requestEditProduct(product.id)
         alert('수정이 완료되었습니다.')
-        console.log(ThumbTitle)
-        //navigate(-1)
+        navigate(-1)
       }
     }
   }
@@ -153,8 +171,14 @@ export const AdminForm = ({ formtype }) => {
         setPrice(product.price)
         setDescription(product.description)
         setisSoldOut(product.isSoldOut)
-        setThumb(product.thumbnail)
-        setDetail(product.photo)
+        if (product.thumbnail) {
+          setThumb('')
+        }
+        if (product.photo) {
+          setDetail('')
+        }
+        setsThumb(product.thumbnail)
+        setsDetail(product.photo)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -218,7 +242,15 @@ export const AdminForm = ({ formtype }) => {
             <Label className="image-label">
               제품 썸네일<span>*</span>
             </Label>
-            <ImageBox>{Thumb && <img alt="썸네일 이미지" src={Thumb} />}</ImageBox>
+            <ImageBox>
+              {sThumb ? (
+                <img alt="썸네일 이미지" src={sThumb} />
+              ) : Thumb ? (
+                <img alt="썸네일 이미지" src={Thumb} />
+              ) : (
+                ''
+              )}
+            </ImageBox>
             <FileName>{ThumbTitle}</FileName>
             <FileLoadButton htmlFor="filethumb">파일찾기</FileLoadButton>
             <FileLoadInput
@@ -232,7 +264,15 @@ export const AdminForm = ({ formtype }) => {
             <Label className="image-label">
               제품 상세 이미지<span>*</span>
             </Label>
-            <ImageBox>{Detail && <img alt="제품 상세 이미지" src={Detail} />}</ImageBox>
+            <ImageBox>
+              {sDetail ? (
+                <img alt="상세 이미지" src={sDetail} />
+              ) : Detail ? (
+                <img alt="상세 이미지" src={Detail} />
+              ) : (
+                ''
+              )}
+            </ImageBox>
             <FileName>{DetailTitle}</FileName>
             <FileLoadButton htmlFor="filedetail">파일찾기</FileLoadButton>
             <FileLoadInput
