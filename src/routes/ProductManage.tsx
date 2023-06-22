@@ -90,6 +90,7 @@ export const ProductManage = () => {
   }, [])
 
   //페이지 계산
+  const offset = (curPage - 1) * limitPage
   const lastPage = curPage * limitPage
   const firstPage = lastPage - limitPage
   const currentPages = (page) => {
@@ -101,6 +102,7 @@ export const ProductManage = () => {
   return (
     <>
       <AdminBoard title="상품관리">
+        <Total>({productList.length})</Total>
         <Select className="category" onChange={handleChangeCategoryoption}>
           {CATEGORYOPTION.map((option, index) => (
             <option key={index} value={option.value}>
@@ -143,7 +145,7 @@ export const ProductManage = () => {
                     selectchk.push(product.id)
                   }}
                 />
-                <span className="board-header index">{index + 1}</span>
+                <span className="board-header index">{offset + index + 1}</span>
                 <span className="board-header cate">{product.tags}</span>
                 <span className="board-header title">{product.title}</span>
                 <span className="board-header price">{product.price}</span>
@@ -294,5 +296,12 @@ const EmptyList = styled.div`
   justify-content: center;
   align-items: center;
   font-size: 16px;
+  color: ${(props) => props.theme.colors.primary};
+`
+const Total = styled.span`
+  position: absolute;
+  top: 15px;
+  font-size: 20px;
+  left: 100px;
   color: ${(props) => props.theme.colors.primary};
 `
