@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { getProductList, Product, deleteProduct } from '../apis/api'
 import styled from 'styled-components'
@@ -6,12 +6,16 @@ import { AdminBoard } from '../components/AdminBoard'
 import { BoardPagination } from '../components/BoardPagination'
 
 export const ProductManage = () => {
+  const [pNumber, setpNumber] = useState(0)
+
   //상품리스트
   const [productList, setProductList] = useState<Product[]>([])
   const [saveList, setSaveList] = useState<Product[]>([])
 
   //체크박스 저장
   const selectchk = ['']
+  //정렬선택 저장
+  const [selectSort, setselectSort] = useState([])
 
   //페이지
   const [curPage, setCurPage] = useState(1)
@@ -49,12 +53,22 @@ export const ProductManage = () => {
 
   //카테고리 정렬
   const handleChangeCategoryoption = (e) => {
-    if (e.target.value === '카테고리') {
-      setProductList([...saveList])
-    } else {
-      setProductList([...productList].filter((product) => product.tags === e.target.value))
-    }
+    setselectSort(e.target.value)
+    console.log(selectSort)
+    //setProductList([...productList].filter((product) => product.tags[0] === selectSort))
+    // if (selectSort) {
+    //   setProductList([...productList].filter((product) => product.tags === selectSort))
+    // }
+    // if (e.target.value === '카테고리') {
+    //   setProductList([...saveList])
+    // } else {
+    //   setProductList([...productList].filter((product) => product.tags === selectSort[0]))
+    // }
   }
+
+  const sorted = useMemo(() => {
+    return setProductList([...productList].filter((product) => product.tags === selectSort))
+  }, [selectSort])
 
   //일반 정렬
   const handleChangeSortoption = (e) => {
@@ -90,6 +104,7 @@ export const ProductManage = () => {
   }, [])
 
   //페이지 계산
+  const offset = (curPage - 1) * limitPage
   const lastPage = curPage * limitPage
   const firstPage = lastPage - limitPage
   const currentPages = (page) => {
@@ -101,6 +116,7 @@ export const ProductManage = () => {
   return (
     <>
       <AdminBoard title="상품관리">
+        <Total>({productList.length})</Total>
         <Select className="category" onChange={handleChangeCategoryoption}>
           {CATEGORYOPTION.map((option, index) => (
             <option key={index} value={option.value}>
@@ -129,21 +145,19 @@ export const ProductManage = () => {
           ) : (
             currentPages(productList).map((product, index) => (
               <BoardItem
-                key={index}
+                key={product.id}
                 onDoubleClick={() => {
                   handleDoubleclickItem(product.id)
                 }}
               >
                 <input
                   type="checkbox"
-                  name=""
                   className="board-header chk"
                   onChange={() => {
-                    console.log('체크클릭' + product.id)
                     selectchk.push(product.id)
                   }}
                 />
-                <span className="board-header index">{index + 1}</span>
+                <span className="board-header index">{index + offset + 1}</span>
                 <span className="board-header cate">{product.tags}</span>
                 <span className="board-header title">{product.title}</span>
                 <span className="board-header price">{product.price}</span>
@@ -166,6 +180,14 @@ export const ProductManage = () => {
     </>
   )
 }
+
+const Total = styled.span`
+  position: absolute;
+  top: 15px;
+  left: 100px;
+  font-size: 20px;
+  color: ${(props) => props.theme.colors.primary};
+`
 
 const BoardWrap = styled.div`
   width: 100%;

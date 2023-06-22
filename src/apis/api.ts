@@ -13,7 +13,7 @@ const requestAdmin = axios.create({
 //사용자 목록 조회 // auth/users
 export const getUserList = async (): Promise<User[]> => {
   try {
-    const { data } = await requestAdmin.get('auth/user')
+    const { data } = await requestAdmin.get('auth/users')
     return data
   } catch (error) {
     console.warn(error)
