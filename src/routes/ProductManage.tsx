@@ -4,9 +4,10 @@ import { getProductList, Product, deleteProduct } from '../apis/api'
 import styled from 'styled-components'
 import { AdminBoard } from '../components/AdminBoard'
 import { BoardPagination } from '../components/BoardPagination'
+import { LoadingSpinner } from '../components/LoadingSpinner'
 
 export const ProductManage = () => {
-  const [pNumber, setpNumber] = useState(0)
+  const [dataLoading, setdataLoading] = useState(false)
 
   //상품리스트
   const [productList, setProductList] = useState<Product[]>([])
@@ -53,22 +54,17 @@ export const ProductManage = () => {
 
   //카테고리 정렬
   const handleChangeCategoryoption = (e) => {
-    setselectSort(e.target.value)
-    console.log(selectSort)
-    //setProductList([...productList].filter((product) => product.tags[0] === selectSort))
-    // if (selectSort) {
-    //   setProductList([...productList].filter((product) => product.tags === selectSort))
-    // }
-    // if (e.target.value === '카테고리') {
-    //   setProductList([...saveList])
-    // } else {
-    //   setProductList([...productList].filter((product) => product.tags === selectSort[0]))
-    // }
+    //setselectSort(e.target.value)
+    if (e.target.value === '카테고리') {
+      setProductList([...saveList])
+    } else {
+      setProductList([...productList].filter((product) => product.tags === e.target.value))
+    }
   }
 
-  const sorted = useMemo(() => {
-    return setProductList([...productList].filter((product) => product.tags === selectSort))
-  }, [selectSort])
+  // const sorted = useMemo(() => {
+  //   return setProductList([...productList].filter((product) => product.tags === selectSort))
+  // }, [selectSort])
 
   //일반 정렬
   const handleChangeSortoption = (e) => {
@@ -94,11 +90,15 @@ export const ProductManage = () => {
   useEffect(() => {
     ;(async () => {
       try {
+        setdataLoading(true)
         const data = await getProductList()
         setSaveList(data)
         setProductList(data)
       } catch (error) {
+        setdataLoading(false)
         console.error('Error fetching products:', error)
+      } finally {
+        setdataLoading(false)
       }
     })()
   }, [])
@@ -116,7 +116,7 @@ export const ProductManage = () => {
   return (
     <>
       <AdminBoard title="상품관리">
-        <Total>({productList.length})</Total>
+        {!dataLoading ? <Total>({productList.length})</Total> : ''}
         <Select className="category" onChange={handleChangeCategoryoption}>
           {CATEGORYOPTION.map((option, index) => (
             <option key={index} value={option.value}>
@@ -140,30 +140,34 @@ export const ProductManage = () => {
           <span className="board-header sold">품절여부</span>
         </BoardHeader>
         <BoardContent>
-          {productList.length === 0 ? (
-            <EmptyList>등록된 상품이 없습니다.</EmptyList>
-          ) : (
-            currentPages(productList).map((product, index) => (
-              <BoardItem
-                key={product.id}
-                onDoubleClick={() => {
-                  handleDoubleclickItem(product.id)
-                }}
-              >
-                <input
-                  type="checkbox"
-                  className="board-header chk"
-                  onChange={() => {
-                    selectchk.push(product.id)
+          {!dataLoading ? (
+            productList.length > 0 ? (
+              currentPages(productList).map((product, index) => (
+                <BoardItem
+                  key={product.id}
+                  onDoubleClick={() => {
+                    handleDoubleclickItem(product.id)
                   }}
-                />
-                <span className="board-header index">{index + offset + 1}</span>
-                <span className="board-header cate">{product.tags}</span>
-                <span className="board-header title">{product.title}</span>
-                <span className="board-header price">{product.price}</span>
-                <span className="board-header sold">{product.isSoldOut ? 'Y' : 'N'}</span>
-              </BoardItem>
-            ))
+                >
+                  <input
+                    type="checkbox"
+                    className="board-header chk"
+                    onChange={() => {
+                      selectchk.push(product.id)
+                    }}
+                  />
+                  <span className="board-header index">{index + offset + 1}</span>
+                  <span className="board-header cate">{product.tags}</span>
+                  <span className="board-header title">{product.title}</span>
+                  <span className="board-header price">{product.price}</span>
+                  <span className="board-header sold">{product.isSoldOut ? 'Y' : 'N'}</span>
+                </BoardItem>
+              ))
+            ) : (
+              <EmptyList>등록된 상품이 없습니다.</EmptyList>
+            )
+          ) : (
+            ''
           )}
         </BoardContent>
         <ButtonWrap>
@@ -176,6 +180,7 @@ export const ProductManage = () => {
           />
           <AddButton to="/productadd">등록</AddButton>
         </ButtonWrap>
+        {dataLoading && <LoadingSpinner />}
       </AdminBoard>
     </>
   )
@@ -316,12 +321,5 @@ const EmptyList = styled.div`
   justify-content: center;
   align-items: center;
   font-size: 16px;
-  color: ${(props) => props.theme.colors.primary};
-`
-const Total = styled.span`
-  position: absolute;
-  top: 15px;
-  font-size: 20px;
-  left: 100px;
   color: ${(props) => props.theme.colors.primary};
 `
