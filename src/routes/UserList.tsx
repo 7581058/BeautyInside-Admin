@@ -8,7 +8,7 @@ export const UserList = () => {
   const [UserList, setUserList] = useState<User[]>([])
 
   const [curPage, setCurPage] = useState(1)
-  const [limitPage, setLimitPage] = useState(5)
+  const [limitPage, setLimitPage] = useState(12)
 
   //페이지 계산
   const lastPage = curPage * limitPage
@@ -34,7 +34,6 @@ export const UserList = () => {
     <AdminBoard title="사용자 목록">
       <BoardHeader>
         <span className="board-header index">No</span>
-        <span className="board-header profile">프로필</span>
         <span className="board-header email">이메일</span>
         <span className="board-header name">이름</span>
       </BoardHeader>
@@ -45,7 +44,6 @@ export const UserList = () => {
           currentPages(UserList).map((user, index) => (
             <BoardItem key={index}>
               <span className="board-header index">{index + 1}</span>
-              <img className="board-header profile" src={user.profileImg} />
               <span className="board-header email">{user.email}</span>
               <span className="board-header name">{user.displayName}</span>
             </BoardItem>
@@ -76,11 +74,11 @@ const BoardHeader = styled.div`
     display: flex;
     justify-content: center;
   }
-  .index {
-    flex-grow: 0.5;
-  }
   .name {
     flex-grow: 3;
+  }
+  .email {
+    flex-grow: 4;
   }
 `
 const BoardContent = styled.div`
@@ -90,7 +88,7 @@ const BoardContent = styled.div`
 `
 const BoardItem = styled.div`
   width: 100%;
-  height: 120px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,12 +98,11 @@ const BoardItem = styled.div`
     display: flex;
     justify-content: center;
   }
-  .index {
-    flex-grow: 0.5;
+  .name {
+    flex-grow: 3;
   }
-  .profile {
-    width: 100px;
-    height: 100px;
+  .email {
+    flex-grow: 4;
   }
   &:hover {
     background-color: ${(props) => props.theme.colors.gray_1};
