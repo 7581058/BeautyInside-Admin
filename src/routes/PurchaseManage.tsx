@@ -4,9 +4,12 @@ import styled from 'styled-components'
 import { useState, useEffect } from 'react'
 import { BoardPagination } from '../components/BoardPagination'
 import { NavLink } from 'react-router-dom' //데이터들어오면 삭제 하기
+import { LoadingSpinner } from '../components/LoadingSpinner'
 
 export const PurchaseManage = () => {
   const [purchaseList, setpurchaseList] = useState<TransactionDetail[]>([])
+
+  const [dataLoading, setdataLoading] = useState(false)
 
   const [curPage, setCurPage] = useState(1)
   const [limitPage, setLimitPage] = useState(5)
@@ -19,6 +22,21 @@ export const PurchaseManage = () => {
     currentPages = page.slice(firstPage, lastPage)
     return currentPages
   }
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        setdataLoading(true)
+        const data = await getPurchaseList()
+        setpurchaseList(data)
+      } catch (error) {
+        setdataLoading(false)
+        console.error('Error fetching products:', error)
+      } finally {
+        setdataLoading(false)
+      }
+    })()
+  }, [])
 
   return (
     <AdminBoard title="거래 내역">
@@ -36,21 +54,25 @@ export const PurchaseManage = () => {
         <span className="board-header done">완료여부</span>
       </BoardHeader>
       <BoardContent>
-        {purchaseList.length === 0 ? (
-          <EmptyList>거래 내역이 없습니다.</EmptyList>
+        {!dataLoading ? (
+          purchaseList.length > 0 ? (
+            currentPages(purchaseList).map((list, index) => (
+              <BoardItem key={index}>
+                <span className="board-header index">No</span>
+                <span className="board-header date">{list.timePaid}</span>
+                <span className="board-header name">{list.user.displayName}</span>
+                <span className="board-header price">{list.product.price}</span>
+                <span className="board-header bank">{list.account.bankName}</span>
+                <span className="board-header title">{list.product.title}</span>
+                <span className="board-header cancel">{list.isCanceled ? 'Y' : 'N'}</span>
+                <span className="board-header done">{list.done ? 'Y' : 'N'}</span>
+              </BoardItem>
+            ))
+          ) : (
+            <EmptyList>거래 내역이 없습니다.</EmptyList>
+          )
         ) : (
-          currentPages(purchaseList).map((list, index) => (
-            <BoardItem key={index}>
-              <span className="board-header index">No</span>
-              <span className="board-header date">{list.timePaid}</span>
-              <span className="board-header name">{list.user.displayName}</span>
-              <span className="board-header price">{list.product.price}</span>
-              <span className="board-header bank">{list.account.bankName}</span>
-              <span className="board-header title">{list.product.title}</span>
-              <span className="board-header cancel">{list.isCanceled ? 'Y' : 'N'}</span>
-              <span className="board-header done">{list.done ? 'Y' : 'N'}</span>
-            </BoardItem>
-          ))
+          ''
         )}
       </BoardContent>
       <BottomWrap>
@@ -61,6 +83,7 @@ export const PurchaseManage = () => {
           curpage={curPage}
         />
       </BottomWrap>
+      {dataLoading && <LoadingSpinner />}
     </AdminBoard>
   )
 }
