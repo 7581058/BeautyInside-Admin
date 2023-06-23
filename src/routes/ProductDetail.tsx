@@ -4,11 +4,13 @@ import { styled } from 'styled-components'
 import { SlArrowLeft } from 'react-icons/sl'
 import { AdminBoard } from '../components/AdminBoard'
 import { getProduct, ProductDetails, deleteProduct } from '../apis/api'
+import { LoadingSpinner } from '../components/LoadingSpinner'
 
 export const ProductDetail = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const id = location.state.id
+  const [dataLoading, setdataLoading] = useState(false)
 
   const [Product, setProduct] = useState<ProductDetails | boolean>({
     id: '',
@@ -26,10 +28,14 @@ export const ProductDetail = () => {
   useEffect(() => {
     ;(async () => {
       try {
+        setdataLoading(true)
         const data = await getProduct(id)
         setProduct(data)
       } catch (error) {
+        setdataLoading(false)
         console.error('Error fetching products:', error)
+      } finally {
+        setdataLoading(false)
       }
     })()
   }, [])
@@ -69,29 +75,32 @@ export const ProductDetail = () => {
             수정
           </Button>
         </ButtonWrap>
-        <DetailWrap>
-          <Inner>
-            <ImageBox>
-              <img src={Product.thumbnail} alt="" />
-            </ImageBox>
-            <InfoBox>
-              <Label>카테고리</Label>
-              <Info>{Product.tags} 메이크업</Info>
-              <Label>상품명</Label>
-              <Info>{Product.title}</Info>
-              <Label>가격</Label>
-              <Info>{Product.price}원</Info>
-              <Label>품절 여부</Label>
-              <Info>{Product.isSoldOut ? 'Y' : 'N'}</Info>
-              <Label>상품 상세 설명</Label>
-              <Info>{Product.description}</Info>
-            </InfoBox>
-          </Inner>
-          <DetailImageBox>
-            <Label>상품 상세 이미지</Label>
-            <img src={Product.photo} alt="" />
-          </DetailImageBox>
-        </DetailWrap>
+        {!dataLoading && (
+          <DetailWrap>
+            <Inner>
+              <ImageBox>
+                <img src={Product.thumbnail} alt="" />
+              </ImageBox>
+              <InfoBox>
+                <Label>카테고리</Label>
+                <Info>{Product.tags} 메이크업</Info>
+                <Label>상품명</Label>
+                <Info>{Product.title}</Info>
+                <Label>가격</Label>
+                <Info>{Product.price}원</Info>
+                <Label>품절 여부</Label>
+                <Info>{Product.isSoldOut ? 'Y' : 'N'}</Info>
+                <Label>상품 상세 설명</Label>
+                <Info>{Product.description}</Info>
+              </InfoBox>
+            </Inner>
+            <DetailImageBox>
+              <Label>상품 상세 이미지</Label>
+              <img src={Product.photo} alt="" />
+            </DetailImageBox>
+          </DetailWrap>
+        )}
+        {dataLoading && <LoadingSpinner />}
       </AdminBoard>
     </>
   )
