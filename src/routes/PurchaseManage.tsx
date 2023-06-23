@@ -15,6 +15,7 @@ export const PurchaseManage = () => {
   const [limitPage, setLimitPage] = useState(5)
 
   //페이지 계산
+  const offset = (curPage - 1) * limitPage
   const lastPage = curPage * limitPage
   const firstPage = lastPage - limitPage
   const currentPages = (page) => {
@@ -40,6 +41,7 @@ export const PurchaseManage = () => {
 
   return (
     <AdminBoard title="거래 내역">
+      {!dataLoading ? <Total>({purchaseList.length})</Total> : ''}
       <NavLink to="/purchasedetail" style={{ position: 'absolute', top: 0, right: 0 }}>
         거래내역상세
       </NavLink>
@@ -58,7 +60,7 @@ export const PurchaseManage = () => {
           purchaseList.length > 0 ? (
             currentPages(purchaseList).map((list, index) => (
               <BoardItem key={index}>
-                <span className="board-header index">No</span>
+                <span className="board-header index">{index + offset + 1}</span>
                 <span className="board-header date">{list.timePaid}</span>
                 <span className="board-header name">{list.user.displayName}</span>
                 <span className="board-header price">{list.product.price}</span>
@@ -87,6 +89,14 @@ export const PurchaseManage = () => {
     </AdminBoard>
   )
 }
+
+const Total = styled.span`
+  position: absolute;
+  top: 15px;
+  left: 100px;
+  font-size: 20px;
+  color: ${(props) => props.theme.colors.primary};
+`
 
 const BoardHeader = styled.div`
   width: 100%;
