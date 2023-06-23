@@ -53,7 +53,7 @@ export const UserList = () => {
       <BottomWrap>
         <BoardPagination
           limitPage={limitPage}
-          totalProduct={UserList.length}
+          total={UserList.length}
           paginate={setCurPage}
           curpage={curPage}
         />
