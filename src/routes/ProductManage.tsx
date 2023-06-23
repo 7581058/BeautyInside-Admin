@@ -174,7 +174,7 @@ export const ProductManage = () => {
           <DeleteButton onClick={handleClickDeleteProduct}>삭제</DeleteButton>
           <BoardPagination
             limitPage={limitPage}
-            totalProduct={productList.length}
+            total={productList.length}
             paginate={setCurPage}
             curpage={curPage}
           />

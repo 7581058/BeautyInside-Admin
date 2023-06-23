@@ -78,7 +78,7 @@ export const PurchaseManage = () => {
       <BottomWrap>
         <BoardPagination
           limitPage={limitPage}
-          totalProduct={purchaseList.length}
+          total={purchaseList.length}
           paginate={setCurPage}
           curpage={curPage}
         />

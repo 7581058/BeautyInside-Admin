@@ -1,16 +1,24 @@
 import { styled } from 'styled-components'
 import { useState } from 'react'
 
-export const BoardPagination = ({ limitPage, totalProduct, paginate, curpage }) => {
+export const BoardPagination = ({ limitPage, total, paginate, curpage }) => {
   const pageNumbers = []
 
-  for (let i = 1; i <= Math.ceil(totalProduct / limitPage); i += 1) {
+  for (let i = 1; i <= Math.ceil(total / limitPage); i += 1) {
     pageNumbers.push(i)
+  }
+
+  const handleClickFirst = () => {
+    paginate(pageNumbers[0])
+  }
+
+  const handleClickLast = () => {
+    paginate(pageNumbers[pageNumbers.length - 1])
   }
 
   return (
     <PageButtonWrap>
-      <PageMoveButton>처음</PageMoveButton>
+      <PageMoveButton onClick={handleClickFirst}>처음</PageMoveButton>
       {pageNumbers.map((page, index) => (
         <PageButton
           key={index}
@@ -21,7 +29,7 @@ export const BoardPagination = ({ limitPage, totalProduct, paginate, curpage }) 
           {page}
         </PageButton>
       ))}
-      <PageMoveButton>마지막</PageMoveButton>
+      <PageMoveButton onClick={handleClickLast}>마지막</PageMoveButton>
     </PageButtonWrap>
   )
 }
