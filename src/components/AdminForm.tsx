@@ -132,7 +132,6 @@ export const AdminForm = ({ formtype }) => {
       ) {
         alert('필수 항목을 정확하게 입력해주세요.')
       } else {
-        e?.preventDefault()
         requestAddProduct()
         alert('등록이 완료되었습니다.')
         navigate('/product')

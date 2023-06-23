@@ -14,7 +14,7 @@ export const ProductManage = () => {
   const [saveList, setSaveList] = useState<Product[]>([])
 
   //체크박스 저장
-  const selectchk = ['']
+  const [selectChecked, setselectChecked] = useState([])
   //정렬선택 저장
   const [selectSort, setselectSort] = useState([])
 
@@ -48,7 +48,9 @@ export const ProductManage = () => {
 
   //상품 삭제
   const handleClickDeleteProduct = async () => {
-    const results = await Promise.all(selectchk.map((id) => deleteProduct(id)))
+    const results = await Promise.all(selectChecked.map((id) => deleteProduct(id)))
+    alert('삭제가 완료되었습니다.')
+    setselectChecked([''])
     window.location.reload()
   }
 
@@ -153,7 +155,7 @@ export const ProductManage = () => {
                     type="checkbox"
                     className="board-header chk"
                     onChange={() => {
-                      selectchk.push(product.id)
+                      setselectChecked((prevList) => [...prevList, product.id])
                     }}
                   />
                   <span className="board-header index">{index + offset + 1}</span>
