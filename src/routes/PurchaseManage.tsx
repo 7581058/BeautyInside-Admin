@@ -3,7 +3,7 @@ import { getPurchaseList, TransactionDetail } from '../apis/api'
 import styled from 'styled-components'
 import { useState, useEffect } from 'react'
 import { BoardPagination } from '../components/BoardPagination'
-import { NavLink } from 'react-router-dom' //데이터들어오면 삭제 하기
+import { useNavigate } from 'react-router-dom'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 
 export const PurchaseManage = () => {
@@ -24,6 +24,16 @@ export const PurchaseManage = () => {
     return currentPages
   }
 
+  const navigate = useNavigate()
+  //상세로 이동
+  const handleDoubleclickItem = (id) => {
+    navigate('/purchasedetail', {
+      state: {
+        id,
+      },
+    })
+  }
+
   useEffect(() => {
     ;(async () => {
       try {
@@ -42,9 +52,6 @@ export const PurchaseManage = () => {
   return (
     <AdminBoard title="거래 내역">
       {!dataLoading ? <Total>({purchaseList.length})</Total> : ''}
-      <NavLink to="/purchasedetail" style={{ position: 'absolute', top: 0, right: 0 }}>
-        거래내역상세
-      </NavLink>
       <BoardHeader>
         <span className="board-header index">No</span>
         <span className="board-header date">거래일</span>
@@ -59,7 +66,12 @@ export const PurchaseManage = () => {
         {!dataLoading ? (
           purchaseList.length > 0 ? (
             currentPages(purchaseList).map((list, index) => (
-              <BoardItem key={index}>
+              <BoardItem
+                key={index}
+                onDoubleClick={() => {
+                  handleDoubleclickItem(list.detailId)
+                }}
+              >
                 <span className="board-header index">{index + offset + 1}</span>
                 <span className="board-header date">
                   {list.timePaid.split('.')[0].split('T')[0]}
