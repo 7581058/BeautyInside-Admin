@@ -33,6 +33,7 @@ export const PurchaseDetail = () => {
       }
     })()
   }, [])
+
   const handleClickButtons = async (e) => {
     if (e.target.value === 'cancel') {
       const isCanceled = !iscanceled
