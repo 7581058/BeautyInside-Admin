@@ -46,6 +46,21 @@ export const getPurchaseList = async (): Promise<TransactionDetail[]> => {
   }
 }
 
+//거래 내역 완료/취소/해제 // products/transactions/:detailId
+export const editPurchase = async (id: string, { isCanceled, done }): Promise<boolean> => {
+  try {
+    const { data } = await requestAdmin.put('products/transactions/' + id, {
+      isCanceled: isCanceled,
+      done: done,
+    })
+    return data
+  } catch (error) {
+    console.warn(error)
+    console.warn('fail to edit purchase')
+    return false
+  }
+}
+
 //단일제품상세조회 // products/:productId
 export const getProduct = async (id: string): Promise<ProductDetails | boolean> => {
   try {
@@ -66,18 +81,6 @@ export const addProduct = async (payload: AddProduct): Promise<Product | boolean
   } catch (error) {
     console.warn(error)
     console.warn('fail to add product')
-    return false
-  }
-}
-
-//거래 내역 완료/취소/해제 // products/transactions/:detailId
-export const editPurchase = async (id: string, payload: PurchaseList): Promise<boolean> => {
-  try {
-    const { data } = await requestAdmin.put('products/transactions/' + id, payload)
-    return data
-  } catch (error) {
-    console.warn(error)
-    console.warn('fail to edit purchase')
     return false
   }
 }
