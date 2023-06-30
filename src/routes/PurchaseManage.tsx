@@ -12,7 +12,7 @@ export const PurchaseManage = () => {
   const [dataLoading, setdataLoading] = useState(false)
 
   const [curPage, setCurPage] = useState(1)
-  const [limitPage, setLimitPage] = useState(5)
+  const [limitPage, setLimitPage] = useState(12)
 
   //페이지 계산
   const offset = (curPage - 1) * limitPage
@@ -52,7 +52,7 @@ export const PurchaseManage = () => {
         <span className="board-header price">거래금액</span>
         <span className="board-header bank">거래은행</span>
         <span className="board-header title">상품명</span>
-        <span className="board-header calcel">취소여부</span>
+        <span className="board-header cancel">취소여부</span>
         <span className="board-header done">완료여부</span>
       </BoardHeader>
       <BoardContent>
@@ -61,7 +61,9 @@ export const PurchaseManage = () => {
             currentPages(purchaseList).map((list, index) => (
               <BoardItem key={index}>
                 <span className="board-header index">{index + offset + 1}</span>
-                <span className="board-header date">{list.timePaid}</span>
+                <span className="board-header date">
+                  {list.timePaid.split('.')[0].split('T')[0]}
+                </span>
                 <span className="board-header name">{list.user.displayName}</span>
                 <span className="board-header price">{list.product.price}</span>
                 <span className="board-header bank">{list.account.bankName}</span>
@@ -112,18 +114,29 @@ const BoardHeader = styled.div`
   }
   .index {
     flex-grow: 0.5;
+    flex-basis: 0;
+  }
+  .name,
+  .price,
+  .bank {
+    flex-grow: 1;
+    flex-basis: 0;
   }
   .date {
     flex-grow: 1.2;
+    flex-basis: 0;
   }
   .title {
-    flex-grow: 3;
+    flex-grow: 2;
+    flex-basis: 0;
   }
   .done {
     flex-grow: 0.5;
+    flex-basis: 0;
   }
   .cancel {
     flex-grow: 0.5;
+    flex-basis: 0;
   }
 `
 const BoardContent = styled.div`
@@ -146,18 +159,29 @@ const BoardItem = styled.div`
   }
   .index {
     flex-grow: 0.5;
+    flex-basis: 0;
   }
   .date {
     flex-grow: 1.2;
+    flex-basis: 0;
+  }
+  .name,
+  .price,
+  .bank {
+    flex-grow: 1;
+    flex-basis: 0;
   }
   .title {
-    flex-grow: 3;
+    flex-grow: 2;
+    flex-basis: 0;
   }
   .done {
     flex-grow: 0.5;
+    flex-basis: 0;
   }
   .cancel {
     flex-grow: 0.5;
+    flex-basis: 0;
   }
   &:hover {
     background-color: ${(props) => props.theme.colors.gray_1};
