@@ -12,7 +12,7 @@ export const PurchaseManage = () => {
   const [dataLoading, setdataLoading] = useState(false)
 
   const [curPage, setCurPage] = useState(1)
-  const [limitPage, setLimitPage] = useState(12)
+  const [limitPage] = useState(12)
 
   //페이지 계산
   const offset = (curPage - 1) * limitPage

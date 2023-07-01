@@ -18,7 +18,7 @@ export const ProductManage = () => {
 
   //페이지
   const [curPage, setCurPage] = useState(1)
-  const [limitPage, setLimitPage] = useState(12) //한번에 보여질 개수
+  const [limitPage] = useState(12) //한번에 보여질 개수
 
   const CATEGORYOPTION = [
     { label: '카테고리', value: '카테고리' },
@@ -46,7 +46,7 @@ export const ProductManage = () => {
 
   //상품 삭제
   const handleClickDeleteProduct = async () => {
-    const results = await Promise.all(selectChecked.map((id) => deleteProduct(id)))
+    await Promise.all(selectChecked.map((id) => deleteProduct(id)))
     alert('삭제가 완료되었습니다.')
     setselectChecked([])
     window.location.reload()
