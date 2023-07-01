@@ -9,7 +9,7 @@ export const UserList = () => {
   const [UserList, setUserList] = useState<User[]>([])
 
   const [curPage, setCurPage] = useState(1)
-  const [limitPage, setLimitPage] = useState(12)
+  const [limitPage] = useState(12)
 
   const [dataLoading, setdataLoading] = useState(false)
 
