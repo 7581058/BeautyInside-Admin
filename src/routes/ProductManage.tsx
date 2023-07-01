@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { getProductList, Product, deleteProduct } from '../apis/api'
 import styled from 'styled-components'
@@ -14,9 +14,7 @@ export const ProductManage = () => {
   const [saveList, setSaveList] = useState<Product[]>([])
 
   //체크박스 저장
-  const [selectChecked, setselectChecked] = useState([])
-  //정렬선택 저장
-  const [selectSort, setselectSort] = useState([])
+  const [selectChecked, setselectChecked] = useState<string[]>([])
 
   //페이지
   const [curPage, setCurPage] = useState(1)
@@ -38,7 +36,7 @@ export const ProductManage = () => {
   const navigate = useNavigate()
 
   //상세로 이동
-  const handleDoubleclickItem = (id) => {
+  const handleDoubleclickItem = (id: string) => {
     navigate('/productdetail', {
       state: {
         id,
@@ -50,26 +48,21 @@ export const ProductManage = () => {
   const handleClickDeleteProduct = async () => {
     const results = await Promise.all(selectChecked.map((id) => deleteProduct(id)))
     alert('삭제가 완료되었습니다.')
-    setselectChecked([''])
+    setselectChecked([])
     window.location.reload()
   }
 
   //카테고리 정렬
-  const handleChangeCategoryoption = (e) => {
-    //setselectSort(e.target.value)
+  const handleChangeCategoryoption = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === '카테고리') {
       setProductList([...saveList])
     } else {
-      setProductList([...productList].filter((product) => product.tags === e.target.value))
+      setProductList([...productList].filter((product) => product.tags.includes(e.target.value)))
     }
   }
 
-  // const sorted = useMemo(() => {
-  //   return setProductList([...productList].filter((product) => product.tags === selectSort))
-  // }, [selectSort])
-
   //일반 정렬
-  const handleChangeSortoption = (e) => {
+  const handleChangeSortoption = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === '낮은가격') {
       setProductList(
         [...productList].sort(function (a, b) {
@@ -109,10 +102,10 @@ export const ProductManage = () => {
   const offset = (curPage - 1) * limitPage
   const lastPage = curPage * limitPage
   const firstPage = lastPage - limitPage
-  const currentPages = (page) => {
-    let currentPages = 0
-    currentPages = page.slice(firstPage, lastPage)
-    return currentPages
+  const currentPages = (page: Product[]) => {
+    let result = []
+    result = page.slice(firstPage, lastPage)
+    return result
   }
 
   return (
@@ -194,17 +187,6 @@ const Total = styled.span`
   left: 100px;
   font-size: 20px;
   color: ${(props) => props.theme.colors.primary};
-`
-
-const BoardWrap = styled.div`
-  width: 100%;
-  height: 100%;
-  color: ${(props) => props.theme.colors.text_primary};
-  box-sizing: border-box;
-  background-color: #fff;
-  box-shadow: ${(props) => props.theme.boxShadow};
-  border: 1px solid ${(props) => props.theme.colors.gray_2};
-  border-radius: ${(props) => props.theme.borderRadius};
 `
 
 const BoardHeader = styled.div`

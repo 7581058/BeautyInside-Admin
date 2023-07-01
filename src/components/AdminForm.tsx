@@ -2,9 +2,9 @@ import { styled } from 'styled-components'
 import { SlArrowLeft } from 'react-icons/sl'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { addProduct, editProduct } from '../apis/api'
+import { addProduct, editProduct, Product } from '../apis/api'
 
-export const AdminForm = ({ formtype }) => {
+export const AdminForm = ({ formtype }: { formtype: string }) => {
   const [Category, setCategory] = useState('')
   const [Title, setTitle] = useState('')
   const [Price, setPrice] = useState(0)
@@ -16,6 +16,7 @@ export const AdminForm = ({ formtype }) => {
   const [ThumbTitle, setThumbTitle] = useState('')
   const [DetailTitle, setDetailTitle] = useState('')
   const [isSoldOut, setisSoldOut] = useState(false)
+  const [editTarget, seteditTarget] = useState<Product>()
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -35,11 +36,11 @@ export const AdminForm = ({ formtype }) => {
   const THUMB_MAX = 1024 ** 2 //1MB
   const DETAIL_MAX = 1024 ** 2 * 4 //4MB
 
-  const handleChangeCategoryoption = (e) => {
+  const handleChangeCategoryoption = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(e.target.value)
   }
 
-  const handleChangeIsSoldOutoption = (e) => {
+  const handleChangeIsSoldOutoption = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === 'Y') {
       setisSoldOut(true)
     } else {
@@ -47,32 +48,32 @@ export const AdminForm = ({ formtype }) => {
     }
   }
 
-  const handleChangeTitle = (e) => {
+  const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value.trim())
   }
 
-  const handleChangePrice = (e) => {
+  const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPrice(Number(e.target.value))
   }
 
-  const handleChangeDescription = (e) => {
+  const handleChangeDescription = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value.trim())
   }
 
-  const handleOnInput = (e) => {
+  const handleOnInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.target.value = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')
   }
 
-  const handleUploadImage = (e) => {
+  const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target
-    const file: any = files
-    if (file.length === 0) {
+    const file: FileList | null = files
+    if (!file || file.length === 0) {
       return
     } else {
       const {
         currentTarget: { files },
       } = e
-      const theFile = files[0]
+      const theFile = file[0]
       const reader = new FileReader()
       reader?.readAsDataURL(theFile)
       reader.onloadend = (finishedEvent) => {
@@ -101,25 +102,25 @@ export const AdminForm = ({ formtype }) => {
       title: Title,
       price: Price,
       description: Description,
-      tags: Category,
+      tags: [Category],
       thumbnailBase64: Thumb,
       photoBase64: Detail,
     })
   }
 
-  const requestEditProduct = async (id) => {
+  const requestEditProduct = async (id: string) => {
     const EditProduct = await editProduct(id, {
       title: Title,
       price: Price,
       description: Description,
-      tags: Category,
+      tags: [Category],
       isSoldOut: isSoldOut,
       thumbnailBase64: Thumb,
       photoBase64: Detail,
     })
   }
 
-  const handleClickSubmitButton = (e) => {
+  const handleClickSubmitButton = () => {
     if (formtype === '등록') {
       if (
         Category.length === 0 ||
@@ -146,9 +147,11 @@ export const AdminForm = ({ formtype }) => {
       ) {
         alert('필수 항목을 정확하게 입력해주세요.')
       } else {
-        requestEditProduct(product.id)
-        alert('수정이 완료되었습니다.')
-        navigate(-1)
+        if (editTarget) {
+          requestEditProduct(editTarget.id)
+          alert('수정이 완료되었습니다.')
+          navigate(-1)
+        }
       }
     }
   }
@@ -157,32 +160,26 @@ export const AdminForm = ({ formtype }) => {
     navigate(-1)
   }
 
-  let product = ''
-  if (formtype === '수정') {
-    product = location.state.product
-  }
-
   useEffect(() => {
-    ;(async () => {
-      try {
-        setTitle(product.title)
-        setCategory(product.tags)
-        setPrice(product.price)
-        setDescription(product.description)
-        setisSoldOut(product.isSoldOut)
-        if (product.thumbnail) {
-          setThumb('')
-        }
-        if (product.photo) {
-          setDetail('')
-        }
-        setsThumb(product.thumbnail)
-        setsDetail(product.photo)
-      } catch (error) {
-        console.error('Error fetching data:', error)
+    if (formtype === '수정') {
+      seteditTarget(location.state.product)
+    }
+    if (editTarget) {
+      setTitle(editTarget.title)
+      setCategory(editTarget.tags[0])
+      setPrice(editTarget.price)
+      setDescription(editTarget.description)
+      setisSoldOut(editTarget.isSoldOut)
+      if (editTarget.thumbnail) {
+        setThumb('')
       }
-    })()
-  }, [])
+      if (editTarget.photo) {
+        setDetail('')
+      }
+      setsThumb(editTarget.thumbnail || '')
+      setsDetail(editTarget.photo || '')
+    }
+  }, [editTarget])
 
   return (
     <>
