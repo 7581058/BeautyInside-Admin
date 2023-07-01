@@ -12,7 +12,6 @@ export const PurchaseDetail = () => {
   const [iscanceled] = useState(false)
   const [Done] = useState(false)
 
-  const navigate = useNavigate()
   const location = useLocation()
   const id = location.state.id
 
