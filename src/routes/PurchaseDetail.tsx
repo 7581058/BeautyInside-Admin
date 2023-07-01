@@ -9,8 +9,8 @@ import { LoadingSpinner } from '../components/LoadingSpinner'
 export const PurchaseDetail = () => {
   const [dataLoading, setdataLoading] = useState(false)
   const [purchaseDetail, setpurchaseDetail] = useState<TransactionDetail[]>([])
-  const [iscanceled, setisCanceled] = useState(false)
-  const [Done, setDone] = useState(false)
+  const [iscanceled] = useState(false)
+  const [Done] = useState(false)
 
   const location = useLocation()
   const id = location.state.id
@@ -39,14 +39,14 @@ export const PurchaseDetail = () => {
     if (e.currentTarget.innerText === '취소해제' || e.currentTarget.innerText === '거래취소') {
       const isCanceled = !iscanceled
       const done = Done
-      const data = await editPurchase(id, { isCanceled, done })
+      await editPurchase(id, { isCanceled, done })
     } else if (
       e.currentTarget.innerText === '완료해제' ||
       e.currentTarget.innerText === '거래완료'
     ) {
       const done = !Done
       const isCanceled = iscanceled
-      const data = await editPurchase(id, { isCanceled, done })
+      await editPurchase(id, { isCanceled, done })
     }
     alert('변경이 완료되었습니다.')
     window.location.reload()

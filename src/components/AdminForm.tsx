@@ -70,9 +70,9 @@ export const AdminForm = ({ formtype }: { formtype: string }) => {
     if (!file || file.length === 0) {
       return
     } else {
-      const {
-        currentTarget: { files },
-      } = e
+      // const {
+      //   currentTarget: { files },
+      // } = e
       const theFile = file[0]
       const reader = new FileReader()
       reader?.readAsDataURL(theFile)
@@ -98,7 +98,7 @@ export const AdminForm = ({ formtype }: { formtype: string }) => {
   }
 
   const requestAddProduct = async () => {
-    const AddProduct = await addProduct({
+    await addProduct({
       title: Title,
       price: Price,
       description: Description,
@@ -109,7 +109,7 @@ export const AdminForm = ({ formtype }: { formtype: string }) => {
   }
 
   const requestEditProduct = async (id: string) => {
-    const EditProduct = await editProduct(id, {
+    await editProduct(id, {
       title: Title,
       price: Price,
       description: Description,
