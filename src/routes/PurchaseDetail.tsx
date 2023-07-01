@@ -2,7 +2,7 @@ import { AdminBoard } from '../components/AdminBoard'
 import styled from 'styled-components'
 import { useState, useEffect, useMemo } from 'react'
 import { SlArrowLeft } from 'react-icons/sl'
-import { useLocation, NavLink, useNavigate } from 'react-router-dom'
+import { useLocation, NavLink } from 'react-router-dom'
 import { getPurchaseList, TransactionDetail, editPurchase } from '../apis/api'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 
@@ -12,7 +12,6 @@ export const PurchaseDetail = () => {
   const [iscanceled] = useState(false)
   const [Done] = useState(false)
 
-  const navigate = useNavigate()
   const location = useLocation()
   const id = location.state.id
 
@@ -50,8 +49,6 @@ export const PurchaseDetail = () => {
       await editPurchase(id, { isCanceled, done })
     }
     alert('변경이 완료되었습니다.')
-    navigate('/purchasedetail')
-    window.location.reload()
   }
 
   return (
