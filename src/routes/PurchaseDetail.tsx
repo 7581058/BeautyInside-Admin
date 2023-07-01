@@ -50,8 +50,6 @@ export const PurchaseDetail = () => {
       await editPurchase(id, { isCanceled, done })
     }
     alert('변경이 완료되었습니다.')
-    navigate('/purchasedetail')
-    window.location.reload()
   }
 
   return (
