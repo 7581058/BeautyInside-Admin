@@ -17,10 +17,10 @@ export const UserList = () => {
   const offset = (curPage - 1) * limitPage
   const lastPage = curPage * limitPage
   const firstPage = lastPage - limitPage
-  const currentPages = (page) => {
-    let currentPages = 0
-    currentPages = page.slice(firstPage, lastPage)
-    return currentPages
+  const currentPages = (page: User[]) => {
+    let result = []
+    result = page.slice(firstPage, lastPage)
+    return result
   }
 
   useEffect(() => {

@@ -1,8 +1,19 @@
 import { styled } from 'styled-components'
-import { useState } from 'react'
 
-export const BoardPagination = ({ limitPage, total, paginate, curpage }) => {
-  const pageNumbers = []
+interface BoardPaginationProps {
+  limitPage: number
+  total: number
+  paginate: (page: number) => void
+  curpage: number
+}
+
+export const BoardPagination: React.FC<BoardPaginationProps> = ({
+  limitPage,
+  total,
+  paginate,
+  curpage,
+}) => {
+  const pageNumbers: number[] = []
 
   for (let i = 1; i <= Math.ceil(total / limitPage); i += 1) {
     pageNumbers.push(i)

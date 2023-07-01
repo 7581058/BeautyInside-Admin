@@ -12,7 +12,7 @@ export const ProductDetail = () => {
   const id = location.state.id
   const [dataLoading, setdataLoading] = useState(false)
 
-  const [Product, setProduct] = useState<ProductDetails | boolean>({
+  const [product, setProduct] = useState<ProductDetails>({
     id: '',
     title: '',
     price: 0,
@@ -30,7 +30,7 @@ export const ProductDetail = () => {
       try {
         setdataLoading(true)
         const data = await getProduct(id)
-        setProduct(data)
+        setProduct(data as ProductDetails)
       } catch (error) {
         setdataLoading(false)
         console.error('Error fetching products:', error)
@@ -38,7 +38,7 @@ export const ProductDetail = () => {
         setdataLoading(false)
       }
     })()
-  }, [])
+  }, [id])
 
   //상품 삭제
   const handleClickDeleteProduct = async () => {
@@ -51,7 +51,7 @@ export const ProductDetail = () => {
   }
 
   //상품 수정
-  const handleClickEditProduct = async (product) => {
+  const handleClickEditProduct = async (product: ProductDetails) => {
     navigate('/productedit', {
       state: {
         product,
@@ -69,7 +69,7 @@ export const ProductDetail = () => {
           <Button onClick={handleClickDeleteProduct}>삭제</Button>
           <Button
             onClick={() => {
-              handleClickEditProduct(Product)
+              handleClickEditProduct(product as ProductDetails)
             }}
           >
             수정
@@ -79,24 +79,24 @@ export const ProductDetail = () => {
           <DetailWrap>
             <Inner>
               <ImageBox>
-                <img src={Product.thumbnail} alt="" />
+                <img src={product.thumbnail || ''} alt="" />
               </ImageBox>
               <InfoBox>
                 <Label>카테고리</Label>
-                <Info>{Product.tags} 메이크업</Info>
+                <Info>{product.tags} 메이크업</Info>
                 <Label>상품명</Label>
-                <Info>{Product.title}</Info>
+                <Info>{product.title}</Info>
                 <Label>가격</Label>
-                <Info>{Product.price}원</Info>
+                <Info>{product.price}원</Info>
                 <Label>품절 여부</Label>
-                <Info>{Product.isSoldOut ? 'Y' : 'N'}</Info>
+                <Info>{product.isSoldOut ? 'Y' : 'N'}</Info>
                 <Label>상품 상세 설명</Label>
-                <Info>{Product.description}</Info>
+                <Info>{product.description}</Info>
               </InfoBox>
             </Inner>
             <DetailImageBox>
               <Label>상품 상세 이미지</Label>
-              <img src={Product.photo} alt="" />
+              <img src={product.photo || ''} alt="" />
             </DetailImageBox>
           </DetailWrap>
         )}

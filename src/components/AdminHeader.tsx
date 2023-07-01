@@ -3,10 +3,15 @@ import { MdLogout } from 'react-icons/md'
 import { AdminClock } from './AdminClock'
 
 export const AdminHeader = () => {
+  const handleClickLogout = () => {
+    localStorage.removeItem('accessToken')
+    window.location.href = ''
+  }
+
   return (
     <Header>
       <AdminClock />
-      <LogoutButton>
+      <LogoutButton onClick={handleClickLogout}>
         <MdLogout />
       </LogoutButton>
     </Header>

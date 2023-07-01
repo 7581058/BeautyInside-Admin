@@ -1,8 +1,8 @@
 import { AdminBoard } from '../components/AdminBoard'
 import styled from 'styled-components'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { SlArrowLeft } from 'react-icons/sl'
-import { useLocation, NavLink, useNavigate } from 'react-router-dom'
+import { useLocation, NavLink } from 'react-router-dom'
 import { getPurchaseList, TransactionDetail, editPurchase } from '../apis/api'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 
@@ -11,7 +11,6 @@ export const PurchaseDetail = () => {
   const [purchaseDetail, setpurchaseDetail] = useState<TransactionDetail[]>([])
   const [iscanceled, setisCanceled] = useState(false)
   const [Done, setDone] = useState(false)
-  const navigate = useNavigate()
 
   const location = useLocation()
   const id = location.state.id
@@ -21,10 +20,7 @@ export const PurchaseDetail = () => {
       try {
         setdataLoading(true)
         const data = await getPurchaseList()
-        const filtered = data.filter((detail) => detail.detailId === id)
-        setpurchaseDetail(filtered[0])
-        setisCanceled(purchaseDetail.isCanceled)
-        setDone(purchaseDetail.done)
+        setpurchaseDetail(data)
       } catch (error) {
         setdataLoading(false)
         console.error('Error fetching products:', error)
@@ -34,13 +30,23 @@ export const PurchaseDetail = () => {
     })()
   }, [])
 
-  const handleClickButtons = async (e) => {
-    if (e.target.value === 'cancel') {
+  function filtering(lists: TransactionDetail[]) {
+    return lists.filter((list) => list.detailId === id)[0]
+  }
+  const filteredDetail = useMemo(() => filtering(purchaseDetail), [purchaseDetail])
+
+  const handleClickButtons = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (e.currentTarget.innerText === '취소해제' || e.currentTarget.innerText === '거래취소') {
       const isCanceled = !iscanceled
-      const data = await editPurchase(id, { isCanceled, Done })
-    } else if (e.target.value === 'completed') {
+      const done = Done
+      const data = await editPurchase(id, { isCanceled, done })
+    } else if (
+      e.currentTarget.innerText === '완료해제' ||
+      e.currentTarget.innerText === '거래완료'
+    ) {
       const done = !Done
-      const data = await editPurchase(id, { iscanceled, done })
+      const isCanceled = iscanceled
+      const data = await editPurchase(id, { isCanceled, done })
     }
     alert('변경이 완료되었습니다.')
     window.location.reload()
@@ -52,82 +58,84 @@ export const PurchaseDetail = () => {
         <SlArrowLeft />
       </PrevButton>
       <AdminBoard title="거래 내역 상세 정보">
-        <ButtonWrap>
-          <Button value="cancel" onClick={(e) => handleClickButtons(e)}>
-            {purchaseDetail.isCanceled ? '취소해제' : '거래취소'}
-          </Button>
-          <Button value="completed" onClick={(e) => handleClickButtons(e)}>
-            {purchaseDetail.done ? '완료해제' : '거래완료'}
-          </Button>
-        </ButtonWrap>
+        {!dataLoading && filteredDetail ? (
+          <>
+            <ButtonWrap>
+              <Button value="cancel" onClick={(e) => handleClickButtons(e)}>
+                {filteredDetail.isCanceled ? '취소해제' : '거래취소'}
+              </Button>
+              <Button value="completed" onClick={(e) => handleClickButtons(e)}>
+                {filteredDetail.done ? '완료해제' : '거래완료'}
+              </Button>
+            </ButtonWrap>
 
-        {!dataLoading ? (
-          <DetailWrap>
-            <ProductWrap>
-              <ImageBox>
-                <img src={purchaseDetail.product?.thumbnail} alt="" />
-              </ImageBox>
-              <ProductInfo>
-                <Label>거래 상품 정보</Label>
-                <Info>
-                  <Labels>카테고리</Labels> <span>{purchaseDetail.product?.tags}</span>
-                </Info>
-                <Info>
-                  <Labels>상품명</Labels> <span>{purchaseDetail.product?.title}</span>
-                </Info>
-                <Info>
-                  <Labels>가격</Labels>{' '}
-                  <span>{purchaseDetail.product?.price.toLocaleString('ko-KR')}원</span>
-                </Info>
-              </ProductInfo>
-            </ProductWrap>
-            <InfoBox>
-              <Inner>
-                <Label>거래 정보</Label>
-                <div>
+            <DetailWrap>
+              <ProductWrap>
+                <ImageBox>
+                  <img src={filteredDetail.product?.thumbnail || ''} alt="" />
+                </ImageBox>
+                <ProductInfo>
+                  <Label>거래 상품 정보</Label>
                   <Info>
-                    <Labels>거래일</Labels>{' '}
-                    <span>{purchaseDetail.timePaid?.split('.')[0].split('T')[0]}</span>
+                    <Labels>카테고리</Labels> <span>{filteredDetail.product?.tags}</span>
                   </Info>
                   <Info>
-                    <Labels>거래시간</Labels>{' '}
-                    <span>{purchaseDetail.timePaid?.split('.')[0].split('T')[1]}</span>
+                    <Labels>상품명</Labels> <span>{filteredDetail.product?.title}</span>
                   </Info>
                   <Info>
-                    <Labels>취소여부</Labels>{' '}
-                    <span>{purchaseDetail.isCanceled ? '취소됨' : '취소전'}</span>
+                    <Labels>가격</Labels>{' '}
+                    <span>{filteredDetail.product?.price.toLocaleString('ko-KR')}원</span>
                   </Info>
-                  <Info>
-                    <Labels>완료여부</Labels>{' '}
-                    <span>{purchaseDetail.done ? '완료됨' : '완료전'}</span>
-                  </Info>
-                </div>
-              </Inner>
-              <Inner>
-                <Label>구매자 정보</Label>
-                <div>
-                  <Info>
-                    <Labels>구매자 이메일</Labels> <span>{purchaseDetail.user?.email}</span>
-                  </Info>
-                  <Info>
-                    <Labels>구매자 이름</Labels> <span>{purchaseDetail.user?.displayName}</span>
-                  </Info>
-                </div>
-              </Inner>
+                </ProductInfo>
+              </ProductWrap>
+              <InfoBox>
+                <Inner>
+                  <Label>거래 정보</Label>
+                  <div>
+                    <Info>
+                      <Labels>거래일</Labels>{' '}
+                      <span>{filteredDetail.timePaid?.split('.')[0].split('T')[0]}</span>
+                    </Info>
+                    <Info>
+                      <Labels>거래시간</Labels>{' '}
+                      <span>{filteredDetail.timePaid?.split('.')[0].split('T')[1]}</span>
+                    </Info>
+                    <Info>
+                      <Labels>취소여부</Labels>{' '}
+                      <span>{filteredDetail.isCanceled ? '취소됨' : '취소전'}</span>
+                    </Info>
+                    <Info>
+                      <Labels>완료여부</Labels>{' '}
+                      <span>{filteredDetail.done ? '완료됨' : '완료전'}</span>
+                    </Info>
+                  </div>
+                </Inner>
+                <Inner>
+                  <Label>구매자 정보</Label>
+                  <div>
+                    <Info>
+                      <Labels>구매자 이메일</Labels> <span>{filteredDetail.user?.email}</span>
+                    </Info>
+                    <Info>
+                      <Labels>구매자 이름</Labels> <span>{filteredDetail.user?.displayName}</span>
+                    </Info>
+                  </div>
+                </Inner>
 
-              <Inner>
-                <Label>계좌 정보</Label>
-                <div>
-                  <Info>
-                    <Labels>은행명</Labels> <span>{purchaseDetail.account?.bankName}</span>
-                  </Info>
-                  <Info>
-                    <Labels>계좌번호</Labels> <span>{purchaseDetail.account?.accountNumber}</span>
-                  </Info>
-                </div>
-              </Inner>
-            </InfoBox>
-          </DetailWrap>
+                <Inner>
+                  <Label>계좌 정보</Label>
+                  <div>
+                    <Info>
+                      <Labels>은행명</Labels> <span>{filteredDetail.account?.bankName}</span>
+                    </Info>
+                    <Info>
+                      <Labels>계좌번호</Labels> <span>{filteredDetail.account?.accountNumber}</span>
+                    </Info>
+                  </div>
+                </Inner>
+              </InfoBox>
+            </DetailWrap>
+          </>
         ) : (
           ''
         )}

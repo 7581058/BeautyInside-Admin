@@ -1,6 +1,18 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts'
 import { getPurchaseList, TransactionDetail } from '../apis/api'
 import { useState, useEffect, useMemo } from 'react'
+
+interface List {
+  timePaid?: string
+}
+
+interface Product {
+  price: number
+}
+
+interface PurchaseList extends List {
+  product: Product
+}
 
 export const SalesChart = () => {
   const [purchaseList, setpurchaseList] = useState<TransactionDetail[]>([])
@@ -16,13 +28,13 @@ export const SalesChart = () => {
     })()
   }, [])
 
-  function countSales(lists, month) {
+  function countSales(lists: PurchaseList[], month: string): PurchaseList[] {
     return lists.filter((list) => list.timePaid?.substr(5, 2) === month)
   }
   const countjune = useMemo(() => countSales(purchaseList, '06'), [purchaseList])
   const countjuly = useMemo(() => countSales(purchaseList, '07'), [purchaseList])
 
-  function countTotal(lists) {
+  function countTotal(lists: PurchaseList[]) {
     let total = 0
     lists.map((list) => (total = list.product.price + total))
     return total

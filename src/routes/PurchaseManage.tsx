@@ -18,15 +18,15 @@ export const PurchaseManage = () => {
   const offset = (curPage - 1) * limitPage
   const lastPage = curPage * limitPage
   const firstPage = lastPage - limitPage
-  const currentPages = (page) => {
-    let currentPages = 0
-    currentPages = page.slice(firstPage, lastPage)
-    return currentPages
+  const currentPages = (page: TransactionDetail[]) => {
+    let result = []
+    result = page.slice(firstPage, lastPage)
+    return result
   }
 
   const navigate = useNavigate()
   //상세로 이동
-  const handleDoubleclickItem = (id) => {
+  const handleDoubleclickItem = (id: string) => {
     navigate('/purchasedetail', {
       state: {
         id,

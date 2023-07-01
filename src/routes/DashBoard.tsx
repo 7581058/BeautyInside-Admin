@@ -19,16 +19,18 @@ export const DashBoard = () => {
 
   const date = new Date()
   const year = String(date.getFullYear())
-  const month = String(date.getMonth() + 1).padStart(2, 0)
-  const todays = String(date.getDate()).padStart(2, 0)
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const todays = String(date.getDate()).padStart(2, '0')
 
   useEffect(() => {
     ;(async () => {
       try {
         setdataLoading(true)
         const purchases = await getPurchaseList()
-        setpurchaseList(purchases.filter((list) => list.timePaid?.split('T')[0] === '2023-06-29'))
-        setpurchaseMonth(purchases.filter((list) => list.timePaid?.substr(5, 2) === '06'))
+        setpurchaseList(
+          purchases.filter((list) => list.timePaid?.split('T')[0] === `${year}-${month}-${todays}`),
+        )
+        setpurchaseMonth(purchases.filter((list) => list.timePaid?.substr(5, 2) === month))
         const products = await getProductList()
         setProductList(products)
       } catch (error) {
@@ -40,24 +42,24 @@ export const DashBoard = () => {
     })()
   }, [])
 
-  function countCancel(lists) {
+  function countCancel(lists: TransactionDetail[]) {
     return lists.filter((list) => list.isCanceled === true).length
   }
   const countcancel = useMemo(() => countCancel(purchaseList), [purchaseList])
 
-  function countDone(lists) {
+  function countDone(lists: TransactionDetail[]) {
     return lists.filter((list) => list.done === true).length
   }
   const countdone = useMemo(() => countDone(purchaseList), [purchaseList])
 
-  function countTotal(lists) {
+  function countTotal(lists: TransactionDetail[]) {
     let total = 0
-    lists.map((list) => (total = list.product.price + total))
+    lists.forEach((list) => (total = list.product.price + total))
     return total
   }
   const counttotal = useMemo(() => countTotal(purchaseList), [purchaseList])
 
-  function countSoldout(lists) {
+  function countSoldout(lists: Product[]) {
     return lists.filter((list) => list.isSoldOut === true).length
   }
   const countsoldout = useMemo(() => countSoldout(productList), [productList])
@@ -68,79 +70,75 @@ export const DashBoard = () => {
   return (
     <>
       {!dataLoading ? (
-        purchaseList.length > 0 ? (
-          <BoardWrap>
-            <TopWrap>
-              <BoardLabel>오늘</BoardLabel>
-              <TopBox>
-                <TopCard>
-                  <CardText className="label">거래 수</CardText>
-                  <CardText className="data">{purchaseList.length}</CardText>
-                </TopCard>
-                <TopCard>
-                  <CardText className="label">거래 취소 수</CardText>
-                  <CardText className="data">{countcancel}</CardText>
-                </TopCard>
-                <TopCard>
-                  <CardText className="label">거래 확정 수</CardText>
-                  <CardText className="data">{countdone}</CardText>
-                </TopCard>
-                <TopCard className="total-sales">
-                  <CardText className="label">
-                    <HiOutlineCircleStack />총 매출
-                  </CardText>
-                  <CardText className="data">{counttotal.toLocaleString('ko-KR')}원</CardText>
-                </TopCard>
-              </TopBox>
-            </TopWrap>
+        <BoardWrap>
+          <TopWrap>
+            <BoardLabel>오늘</BoardLabel>
+            <TopBox>
+              <TopCard>
+                <CardText className="label">거래 수</CardText>
+                <CardText className="data">{purchaseList.length}</CardText>
+              </TopCard>
+              <TopCard>
+                <CardText className="label">거래 취소 수</CardText>
+                <CardText className="data">{countcancel}</CardText>
+              </TopCard>
+              <TopCard>
+                <CardText className="label">거래 확정 수</CardText>
+                <CardText className="data">{countdone}</CardText>
+              </TopCard>
+              <TopCard className="total-sales">
+                <CardText className="label">
+                  <HiOutlineCircleStack />총 매출
+                </CardText>
+                <CardText className="data">{counttotal.toLocaleString('ko-KR')}원</CardText>
+              </TopCard>
+            </TopBox>
+          </TopWrap>
 
-            <MiddleWrap>
-              <MiddleBox>
-                <BoardLabel>상품 현황</BoardLabel>
-                <MiddleCard>
-                  <div>
-                    <HiOutlineArchiveBox />
-                    <span>총 상품 수</span>
-                    <span>{productList.length}</span>
-                  </div>
-                  <div>
-                    <HiOutlineArchiveBoxXMark />
-                    <span>현재 품절 상품 수</span>
-                    <span>{countsoldout}</span>
-                  </div>
-                </MiddleCard>
-              </MiddleBox>
-              <MiddleBox>
-                <BoardLabel>이번달 거래</BoardLabel>
-                <MiddleCard>
-                  <div>
-                    <HiOutlineCube />
-                    <span>거래 수</span>
-                    <span>{purchaseMonth.length}</span>
-                  </div>
-                  <div>
-                    <FiMinusSquare />
-                    <span>거래 취소 수</span>
-                    <span>{countmonthcancel}</span>
-                  </div>
-                  <div>
-                    <FiCheckSquare />
-                    <span>거래 확정 수</span>
-                    <span>{countmonthdone}</span>
-                  </div>
-                </MiddleCard>
-              </MiddleBox>
-            </MiddleWrap>
-            <BottomWrap>
-              <BoardLabel>매출 차트</BoardLabel>
-              <Chart>
-                <SalesChart />
-              </Chart>
-            </BottomWrap>
-          </BoardWrap>
-        ) : (
-          <EmptyList>정보 조회에 실패했습니다.</EmptyList>
-        )
+          <MiddleWrap>
+            <MiddleBox>
+              <BoardLabel>상품 현황</BoardLabel>
+              <MiddleCard>
+                <div>
+                  <HiOutlineArchiveBox />
+                  <span>총 상품 수</span>
+                  <span>{productList.length}</span>
+                </div>
+                <div>
+                  <HiOutlineArchiveBoxXMark />
+                  <span>현재 품절 상품 수</span>
+                  <span>{countsoldout}</span>
+                </div>
+              </MiddleCard>
+            </MiddleBox>
+            <MiddleBox>
+              <BoardLabel>이번달 거래</BoardLabel>
+              <MiddleCard>
+                <div>
+                  <HiOutlineCube />
+                  <span>거래 수</span>
+                  <span>{purchaseMonth.length}</span>
+                </div>
+                <div>
+                  <FiMinusSquare />
+                  <span>거래 취소 수</span>
+                  <span>{countmonthcancel}</span>
+                </div>
+                <div>
+                  <FiCheckSquare />
+                  <span>거래 확정 수</span>
+                  <span>{countmonthdone}</span>
+                </div>
+              </MiddleCard>
+            </MiddleBox>
+          </MiddleWrap>
+          <BottomWrap>
+            <BoardLabel>매출 차트</BoardLabel>
+            <Chart>
+              <SalesChart />
+            </Chart>
+          </BottomWrap>
+        </BoardWrap>
       ) : (
         ''
       )}
@@ -148,16 +146,6 @@ export const DashBoard = () => {
     </>
   )
 }
-
-const EmptyList = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-  color: ${(props) => props.theme.colors.primary};
-`
 
 const BoardWrap = styled.div`
   width: 100%;
