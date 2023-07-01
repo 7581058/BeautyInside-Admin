@@ -51,12 +51,6 @@ const Header = styled.div`
   }
 `
 
-const Time = styled.div`
-  font-size: 16px;
-  position: absolute;
-  right: 74px;
-`
-
 const LogoutButton = styled.button`
   width: 36px;
   height: 36px;
