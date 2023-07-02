@@ -5,7 +5,7 @@ import { AdminClock } from './AdminClock'
 export const AdminHeader = () => {
   const handleClickLogout = () => {
     localStorage.removeItem('accessToken')
-    window.location.href = ''
+    window.location.href = 'https://beautyinside.netlify.app/'
   }
 
   return (
