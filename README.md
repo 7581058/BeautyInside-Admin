@@ -12,6 +12,10 @@
 온라인 상으로 퍼스널 컬러를 진단 하고 진단 결과에 따른 제품을 추천 받고 구매할 수 있는  
 메이크업 제품 판매 쇼핑몰입니다.
 
+프로젝트 레포지토리: https://github.com/YTTC-T/BeautyInside-Admin  
+프로젝트 커밋 히스토리: https://github.com/YTTC-T/BeautyInside-Admin/commits/main/  
+프로젝트 PR 히스토리: https://github.com/YTTC-T/BeautyInside-Admin/pulls?q=is%3Apr+is%3Aclosed
+
 <br>
 
 ## 📆 프로젝트 기간
